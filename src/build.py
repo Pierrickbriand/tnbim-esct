@@ -3,7 +3,7 @@ import pathlib, sys
 here = pathlib.Path(__file__).parent
 racine = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else (here.parent if here.name == 'src' else here / 'dist')
 css = (here/'style.css').read_text(encoding='utf-8')
-communs = ['01-donnees.js','02-moteur.js','04-consignes.js','05-chapitres.js','05b-projets.js','06-dossier.js']
+communs = ['01-donnees.js','02-moteur.js','03-schemas.js','04-consignes.js','05-chapitres.js','05b-projets.js','06-dossier.js']
 def assembler(shell, fichiers, sortie):
     js = '\n'.join((here/f).read_text(encoding='utf-8') for f in fichiers)
     js = "(function () {\n'use strict';\n" + js + "\n})();"

@@ -46,6 +46,9 @@ Aucun identifiant de champ modifié. Testé avec trois fichiers fictifs.
 ## Livraison 4 bis – 14 octobre 2026, retour de la session
 - Retour des étudiants : fichier .md incompris. Étape 1 : nouveau paragraphe « Deux fichiers à télécharger » (ce qu'est un .md, pourquoi, sa destination dans le projet Claude ; le .csv pour les projets qui calculent ; où arrive le fichier), aide « Je ne retrouve pas le fichier ». Étape 2 : création du projet détaillée en cinq pas (zone des fichiers, « + » ou « Ajouter », vérification), bouton de retéléchargement sur place. Glossaire : .md et .csv.
 
+## Livraison 4 ter – 14 octobre 2026
+- Huit schémas simplifiés (SVG, dans `03-schemas.js`), chacun dans une aide repliable « Voir le schéma » : le parcours en six étapes et les trois temps (Départ) ; enregistrer et reprendre le fichier de projet (Départ, aide « Comment marche cette page ») ; où arrive le fichier téléchargé (étape 1) ; créer le projet Claude et donner la fiche à Claude (étape 2) ; copier une consigne et la coller dans Claude (étapes 2 et 3) ; de la conversation à la ligne du journal (étape 5) ; déposer sur Teams (étape 6). Les schémas ne montrent pas de capture réelle : disposition indicative, légende numérotée.
+
 ## Réglages (bloc CONFIG de src/01-donnees.js)
 - nbGroupes : 6 (aide à la saisie).
 - soutenance : 20 minutes par groupe (12 + 8).

@@ -116,6 +116,7 @@ const CHAPITRES = [
       ${champ('id_nom', `Vous, qui tenez cette page`, { ex: 'Prénom NOM', requis: true, sansMention: true, large: true, aide: `Votre nom figure sur votre PDF et sur votre fichier de projet.` })}
       ${champ('id_membres', `Tous les membres du groupe`, { type: 'zone', large: true, ex: `Prénom NOM, un par ligne`, requis: true, sansMention: true })}</div>
       <h3>Qui fait quoi dans le groupe</h3><p>Chacun garde un rôle principal. Le travail reste collectif. Écrivez le prénom et le nom.</p>${blocRoles()}`)
+    + schema('parcours')
     + aide(`Comment marche cette page`, tirets([
         `chaque étudiant tient sa page et son fichier de projet ; les contenus communs (cadrage, plan, résultats) se recopient entre coéquipiers`,
         `chaque étape contient des actions à cocher et des consignes à copier dans Claude`,
@@ -129,6 +130,7 @@ const CHAPITRES = [
         `Cliquez sur « Enregistrer » à chaque pause et en fin de session. Le fichier arrive dans les téléchargements.`,
         `Rangez-le dans le dossier du groupe sur Teams, ou envoyez-le à votre propre adresse.`,
         `Pour reprendre : cliquez sur « Ouvrir », ou glissez le fichier n'importe où sur la page.`])
+      + schema('enregistrer')
       + `<p><b>À la fin.</b> Vous déposez sur Teams votre fichier de projet, votre PDF (journal et dossier) et le support commun du groupe, au plus tard ${DEPOTL()}. Ne collez jamais ce fichier dans Claude.</p>`
       + tableau(['Action', 'Bouton', 'Raccourci'], [
         ['Repartir de zéro', '« Nouveau »', 'Alt + N'], ['Reprendre un fichier de projet', '« Ouvrir », ou glisser le fichier sur la page', 'Alt + O'],
@@ -163,6 +165,7 @@ const CHAPITRES = [
       <p><b>Les lots, au format .csv.</b> C'est un tableau en texte, qui s'ouvre dans Excel. Il sert seulement aux projets qui calculent (tableau de bord, compétences). Si vous ne connaissez pas encore votre projet, téléchargez-le quand même : il ne pèse rien.</p>
       <p>Quand vous cliquez, le fichier arrive dans votre dossier « Téléchargements », sous le nom « fiche-chantier-rive-nord.md » ou « lots-chantier-rive-nord.csv ». Rien d'autre ne se passe : vous le retrouverez à l'étape 2.</p>
       <div class="actions"><button type="button" class="btn plein" data-action="fiche-md">Télécharger la fiche (.md)</button><button type="button" class="btn" data-action="fiche-csv">Télécharger les lots (.csv)</button></div>`
+      + schema('telechargement')
       + aide(`Je ne retrouve pas le fichier, ou je ne sais pas l'ouvrir`, `<p>Le fichier est dans le dossier « Téléchargements » de votre ordinateur. Vous pouvez aussi cliquer sur l'icône de téléchargement de votre navigateur, en haut à droite, pour le voir.</p>
         <p>Vous n'avez pas besoin de l'ouvrir : vous le donnerez à Claude tel quel. Si vous voulez quand même le lire, ouvrez-le avec le Bloc-notes (Windows) ou TextEdit (Mac).</p>
         <p>Si vous l'avez perdu, cliquez de nouveau sur « Télécharger la fiche » : un nouveau fichier identique arrive dans les téléchargements.</p>`, 'aide_fichier_md'))
@@ -187,6 +190,7 @@ const CHAPITRES = [
         `Donnez-lui la fiche du chantier. Dans le projet, cherchez la zone des fichiers : elle s'appelle « Fichiers », « Connaissances » ou « Contenu du projet » selon la version. Cliquez sur « + » ou « Ajouter », puis choisissez « fiche-chantier-rive-nord.md » dans votre dossier « Téléchargements ». Vous pouvez aussi glisser le fichier dans cette zone.`,
         `Vérifiez que le nom du fichier apparaît dans la liste. C'est fait : Claude lira la fiche à chaque conversation.`,
         `Collez ensuite les instructions de l'étape suivante dans la zone « Instructions » du projet.`])
+      + schema('projet') + schema('fichier')
       + `<p class="note">Fichier perdu ? Retéléchargez-le ici, il arrive dans « Téléchargements ».</p><div class="actions"><button type="button" class="btn" data-action="fiche-md">Télécharger la fiche du chantier (.md)</button></div>`
       + aide(`La fiche ne se charge pas ?`, `<p>Si l'ajout de fichier échoue, copiez le texte ci-dessous et collez-le à la fin de la zone « Instructions » du projet. Claude le relira à chaque conversation. C'est moins propre, mais cela marche partout.</p>` + consigne('fiche_chantier', `Texte de la fiche du chantier`), 'aide_fiche_texte') + liens(['claude_projets']))
     + etape('c_instructions', `Collez les instructions`, '10 min', `<p>Les instructions sont déjà rédigées ci-dessous : copiez-les telles quelles dans votre projet. Les cases et les champs sont là pour les adapter. Dans les deux champs de texte, remplacez ce qui est entre accolades { } par votre situation.</p>
@@ -197,7 +201,7 @@ const CHAPITRES = [
       <div class="champs">${champ('ip_format', `Format d'écriture des réponses`, { type: 'liste', options: LIB_FORMATS, sansMention: true, aide: `Sans choix, Claude répond en prose courte.` })}
       ${champ('ip_travail', `Qui nous sommes et notre façon de travailler`, { type: 'zone', lignes: 5, large: true, defaut: DEF_TRAVAIL, sansMention: true, aide: `Remplacez les accolades. Vous pouvez tout réécrire.` })}
       ${champ('ip_jamais', `Ce que Claude ne doit jamais faire`, { type: 'zone', lignes: 4, large: true, defaut: DEF_JAMAIS, sansMention: true, aide: `Remplacez les accolades. Ajoutez ce qui vous a déjà agacé chez une IA.` })}</div>`
-      + consigne('instructions', `Instructions du projet`) + `<p>Elles mentionnent votre projet : le groupe n'a pas encore choisi à ce stade. Claude l'apprendra dans la première conversation, ou vous revenez copier la version à jour après l'étape 3.</p>`)
+      + consigne('instructions', `Instructions du projet`) + schema('consigne') + `<p>Elles mentionnent votre projet : le groupe n'a pas encore choisi à ce stade. Claude l'apprendra dans la première conversation, ou vous revenez copier la version à jour après l'étape 3.</p>`)
     + etape('c_test', `Vérifiez que Claude a compris (facultatif)`, '5 min', `<p>Envoyez cette consigne dans une conversation du projet. Comparez chaque réponse à ce que vous attendiez :</p>` + tirets([
         `rôle : assistant de votre groupe, pour un module sur la transition numérique du BTP`,
         `chantier : ${nb(CHANTIER.surface)} m², ${eur(CHANTIER.budget)} HT, ${CHANTIER.duree} mois`,
@@ -234,7 +238,7 @@ const CHAPITRES = [
       + `<div class="cadre-outil"><iframe src="${OUTILS.entraineur}" title="Entraîneur de prompt" loading="lazy"></iframe></div>
       <div class="actions"><a class="btn" href="${OUTILS.entraineur}" target="_blank" rel="noopener">Ouvrir l'entraîneur dans un nouvel onglet</a></div>
       <div class="champs">${champ('p_consigne', `Votre consigne de démarrage, améliorée dans l'entraîneur`, { type: 'zone', lignes: 6, large: true, ex: `Collez ici la version finale, après l'analyse de l'entraîneur.`, aide: `Facultatif mais recommandé : elle figure dans votre dossier, à côté de la consigne de départ, et montre votre progrès.` })}</div>`)
-    + etape('p_depart', `Lancez le projet avec Claude`, '20 min', `<p>Envoyez cette consigne dans votre projet Claude, ou la version améliorée dans l'entraîneur. <b>Avant</b>, écrivez le cadrage initial à l'étape 5 « Journal et références » : le cadrage s'écrit sans IA, avant le premier échange.</p>` + consigne('demarrage', `Consigne de démarrage`)
+    + etape('p_depart', `Lancez le projet avec Claude`, '20 min', `<p>Envoyez cette consigne dans votre projet Claude, ou la version améliorée dans l'entraîneur. <b>Avant</b>, écrivez le cadrage initial à l'étape 5 « Journal et références » : le cadrage s'écrit sans IA, avant le premier échange.</p>` + consigne('demarrage', `Consigne de démarrage`) + schema('consigne')
       + `<p><b>Le plan en cinq lignes.</b> Claude vous propose un plan. Discutez-le, corrigez-le, puis écrivez ici <i>votre</i> plan, pas le sien : cinq étapes, dans l'ordre, avec pour chacune qui s'en charge et ce que vous vérifiez à la main. Ce plan ira dans la section « Le projet » du dossier et sur la diapositive « Notre méthode ». À l'oral, le jury comparera ce plan à ce que vous avez réellement fait : les écarts sont normaux, à condition de les expliquer.</p>
       <div class="champs">${champ('p_plan', `Le plan retenu par le groupe, en cinq lignes`, { type: 'zone', lignes: 6, large: true, requis: true, sansMention: true, ex: `1. Décrire les scénarios (tous, première session) ; vérification : relecture croisée.\n2. Chercher les ordres de grandeur (Prénom, avant le …) ; vérification : une source par chiffre.\n3. …` })}</div>`);
   }
@@ -254,7 +258,7 @@ const CHAPITRES = [
   rendu: C => bloc(`À quoi sert le journal, et comment le remplir`, `<p><b>À quoi il sert.</b> Le jury ne peut pas voir vos conversations avec Claude. Le journal est la seule trace de votre usage de l'IA. C'est lui qui est noté sur ce critère : sans journal, l'usage de l'IA est plafonné à 1,5 point sur 3. Il montre surtout votre jugement : ce que vous avez rejeté ou corrigé compte plus que ce que vous avez gardé.</p>
       <p><b>Quand ajouter une ligne.</b> Chaque fois que Claude a changé votre travail : une consigne qui a donné un résultat que vous avez utilisé, un résultat que vous avez corrigé, une réponse que vous avez rejetée. Pas besoin de noter « bonjour » ni les reformulations. Une bonne session de travail donne deux à quatre lignes.</p>
       <p><b>Comment.</b> Tout de suite après l'échange, pas le soir. Dans l'ordre : la date, l'outil (« Claude, projet du groupe »), ce que vous vouliez, la phrase de votre consigne qui a fait la différence, ce que Claude a donné, votre décision (gardé, modifié ou rejeté) et pourquoi, puis comment vous avez vérifié : quel document ouvert, à quelle date. Aucune donnée confidentielle ou personnelle.</p>
-      <p><b>Trois moments obligatoires.</b> Le cadrage initial, écrit sans IA avant tout. Le journal, au fil de l'eau. Le bilan, avant le dépôt.</p>`)
+      <p><b>Trois moments obligatoires.</b> Le cadrage initial, écrit sans IA avant tout. Le journal, au fil de l'eau. Le bilan, avant le dépôt.</p>` + schema('journal'))
     + decision('cadrage')
     + etape('j_cadrage', `Cadrage initial, écrit sans IA`, '20 min', `<p>Écrivez à la main, avant d'ouvrir Claude pour le projet. Quelques lignes suffisent. C'est votre point de départ : le jury le comparera à ce que vous présenterez, pour mesurer ce que le travail et l'IA ont changé.</p>
       <div class="champs">${champ('cad_date', `Date d'écriture`, { ex: '14 octobre', requis: true, sansMention: true })}
@@ -294,7 +298,7 @@ const CHAPITRES = [
       <div class="actions"><button type="button" class="btn plein" data-action="exporter">Exporter en PDF</button><button type="button" class="btn" data-action="enregistrer">Enregistrer le fichier de projet</button></div>
       <p class="note">Nom du PDF : TNBIM_${esc(cheminNom())}_journal-dossier.pdf. Nom du fichier de projet : ${esc(nomJson())}.</p>`)
     + etape('dp_teams', `Déposez sur Teams`, '', `<p>Au plus tard ${DEPOTL()}, chaque étudiant dépose dans le dossier Teams de son groupe :</p>` + tirets([`son PDF (journal et dossier)`, `son fichier de projet .json`, `le support de présentation commun au groupe (une seule fois, par la personne chargée du support)`])
-      + `<p class="note">Vérifiez que les fichiers apparaissent bien dans Teams avant de fermer.</p>`)
+      + schema('depot') + `<p class="note">Vérifiez que les fichiers apparaissent bien dans Teams avant de fermer.</p>`)
 }
 ];
 const groupes = () => ['Première session', 'Entre les deux sessions', 'Dépôt et oral'];
