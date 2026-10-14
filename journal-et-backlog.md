@@ -1,6 +1,6 @@
 # Journal et backlog – application TNBIM ESCT Nantes
 
-Adresse publiée : https://pierrickbriand.github.io/tnbim-esct/ (copie de secours : https://pierrickbriand.github.io/outils-ia-pedagogie/tnbim-esct/)
+Adresse publiée : https://pierrickbriand.github.io/tnbim-esct/ (dépôt `tnbim-esct`). L'ancienne adresse outils-ia-pedagogie/tnbim-esct/ renvoie vers celle-ci depuis le 14 octobre 2026.
 Sources dans `src/` ; assemblage : `python3 src/build.py` depuis ce dossier.
 
 ## Livraison 1 – 13 octobre 2026
@@ -34,7 +34,7 @@ Tests : six écrans, quatre projets, export, sans erreur dans un navigateur de t
 
 ## Livraison 3 ter – 14 octobre 2026 (188 Ko)
 - Instructions du projet Claude : case « Appliquer les règles de français du formateur » (cochée par défaut) qui ajoute un bloc complet, adapté aux étudiants : français simple et formules à bannir, guillemets et espaces, tirets, nombres, majuscules accentuées, dates et heures, listes, anglicismes à traduire (brief, prompt, feedback, template, workflow, KPI, dashboard, reporting, deadline).
-- Page indépendante : dépôt `tnbim-esct`, https://pierrickbriand.github.io/tnbim-esct/ ; la copie dans `outils-ia-pedagogie/tnbim-esct/` deviendra un renvoi. Les deux adresses partagent le même domaine : la sauvegarde du navigateur reste lisible de l'une à l'autre.
+- Page indépendante : dépôt `tnbim-esct`, https://pierrickbriand.github.io/tnbim-esct/ ; la copie dans `outils-ia-pedagogie/tnbim-esct/` est devenue un renvoi (page de redirection, chapitre conservé). Les deux adresses partagent le même domaine : la sauvegarde du navigateur reste lisible de l'une à l'autre.
 Aucun identifiant de champ modifié : le travail des étudiants de la session du 14 octobre est conservé.
 
 ## Réglages (bloc CONFIG de src/01-donnees.js)
