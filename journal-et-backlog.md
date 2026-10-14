@@ -55,6 +55,11 @@ Aucun identifiant de champ modifié. Testé avec trois fichiers fictifs.
 - Rappel d'agenda : bouton « Ajouter le rappel à mon agenda (.ics) », événement d'une journée la veille de la dernière session (date saisie au départ), avec alarme à 9 h, description complète. Désactivé tant que la date n'est pas saisie.
 - Textes, rôles, scène, plan d'action, PDF et correcteur mis à jour : « envoi » à la place de « dépôt ».
 
+## Livraison 5 bis – 14 octobre 2026, retours de la session (suite)
+- « 2. Régler Claude », pas « Collez les instructions » : explication du mécanisme (chaque case = une phrase du cadre gris, le menu et les champs se recopient dans le texte), titre du groupe de cases, titre « Le texte à copier dans Claude » au-dessus du cadre gris ; le cadre gris se surligne brièvement à chaque changement de case, de menu ou de champ.
+- Repère « Confidentialité : ce qui n'entre jamais dans Claude », en tête de « 2. Régler Claude » : chantier fictif seulement, aucune connexion d'outil ou de base de données au projet, compte personnel, règle de l'entreprise prioritaire (secret de la défense nationale, habilitation, accord de confidentialité, secret des affaires), ce que disent les textes (RGPD, règlement IA, secret des affaires, secret de la défense nationale) avec sources à ouvrir ; réglage « Confidentialité » de Claude. Sources ajoutées : Légifrance (Code de commerce L151-1 et s., Code pénal 413-9 et s.), marquées « à vérifier ».
+- Règle 1 du départ : « ni connexion à un outil de l'entreprise ».
+
 ## Réglages (bloc CONFIG de src/01-donnees.js)
 - nbGroupes : 6 (aide à la saisie).
 - soutenance : 20 minutes par groupe (12 + 8).

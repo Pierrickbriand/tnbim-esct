@@ -522,6 +522,8 @@ const SOURCES = {
   ia_ce: { t: `Commission européenne – Législation sur l'IA et calendrier d'application`, u: 'https://digital-strategy.ec.europa.eu/fr/policies/regulatory-framework-ai' },
   ia_texte: { t: `Règlement (UE) 2024/1689 sur l'intelligence artificielle – texte officiel`, u: 'https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=OJ:L_202401689' },
   anssi: { t: `ANSSI – la directive NIS 2`, u: 'https://cyber.gouv.fr/' },
+  secret_affaires: { t: `Légifrance – Code de commerce, protection du secret des affaires (articles L151-1 et suivants, à vérifier)`, u: 'https://www.legifrance.gouv.fr/' },
+  secret_defense: { t: `Légifrance – Code pénal, atteintes au secret de la défense nationale (articles 413-9 et suivants, à vérifier)`, u: 'https://www.legifrance.gouv.fr/' },
   claude_projets: { t: `Aide de Claude – créer et gérer des projets (en anglais)`, u: 'https://support.claude.com/en/articles/9519177' },
   claude_limites: { t: `Aide de Claude – bien utiliser ses limites d'usage (en anglais)`, u: 'https://support.claude.com/en/articles/9797557' }
 };
@@ -1426,7 +1428,7 @@ const CHAPITRES = [
         ['Repartir de zéro', '« Nouveau »', 'Alt + N'], ['Reprendre un fichier de projet', '« Ouvrir », ou glisser le fichier sur la page', 'Alt + O'],
         ['Enregistrer le fichier de projet', '« Enregistrer »', 'Ctrl + S, ou ⌘ S sur Mac'], ['Exporter le dossier en PDF', '« Exporter »', 'Ctrl + E, ou ⌘ E sur Mac']]))
     + etape('depart_regles', `Retenez quatre règles`, '', pas([
-        `<b>Aucune donnée réelle dans Claude.</b> Ni entreprise, ni contrat, ni salarié. Vous travaillez sur le chantier fictif.`,
+        `<b>Aucune donnée réelle dans Claude.</b> Ni entreprise, ni contrat, ni salarié, ni connexion à un outil de l'entreprise. Vous travaillez sur le chantier fictif.`,
         `<b>Le cadrage s'écrit sans IA</b>, avant le premier échange avec Claude.`,
         `<b>Chaque usage significatif entre dans le journal</b>, avec ce que vous gardez, modifiez ou rejetez.`,
         `<b>Aucune référence juridique n'entre dans le dossier sans avoir été ouverte</b> sur sa source officielle.`]))
@@ -1472,6 +1474,11 @@ const CHAPITRES = [
   rendu: () => bloc(`Pourquoi un projet Claude ?`, `<p>Sans projet, chaque nouvelle conversation repart de zéro : il faut tout recoller, et chaque membre du groupe obtient des réponses différentes.</p>
       <p>Avec un projet, Claude connaît dès la première phrase le chantier Rive Nord et vos règles de travail. Tout le groupe travaille avec le même cadre, et vos usages restent faciles à tracer dans le journal.</p>
       <p class="note">Quatre gestes, une quinzaine de minutes : ouvrir Claude, créer le projet, coller les instructions déjà rédigées, ajouter la fiche du chantier. Le reste est facultatif.</p>`)
+    + repere(`Confidentialité : ce qui n'entre jamais dans Claude`, `<p><b>La règle du module est simple : seulement le chantier fictif.</b> Rien de votre entreprise, même « juste pour voir » : ni plan, ni contrat, ni prix, ni nom de salarié ou de client, ni document interne. Ce que vous collez dans un outil d'IA en ligne sort de l'entreprise et part chez un tiers.</p>
+      <p><b>Ne connectez rien.</b> Claude propose de relier un projet à des outils : messagerie, Drive, bases de données, logiciels d'entreprise. Pour ce module, n'activez aucune connexion, et n'utilisez pas votre compte professionnel : un compte personnel gratuit suffit. Une connexion donne à l'outil l'accès à des données que vous ne contrôlez plus une à une.</p>
+      <p><b>Vous travaillez dans une entreprise sous contrainte forte</b> (secret de la défense nationale, habilitation, accord de confidentialité, clause de secret des affaires) ? La règle de votre entreprise prime sur tout ce que dit cette page. Une information classifiée ou protégée ne va dans aucun outil en ligne, jamais, sous aucune forme, même anonymisée. En cas de doute, demandez à votre responsable sécurité ou à votre tuteur avant, pas après.</p>
+      <p><b>Ce que disent les textes.</b> Le RGPD protège les données des personnes. Le règlement européen sur l'IA encadre les usages de l'IA et fixe des obligations aux fournisseurs et aux utilisateurs professionnels : il ne rend pas vos données confidentielles pour autant. Le secret des affaires et le secret de la défense nationale ont leurs propres textes, avec des sanctions pénales pour la compromission. Ouvrez les sources ci-dessous avant de citer un article : c'est l'exercice du module.</p>
+      <p class="note">Dans Claude, ouvrez « Paramètres », puis « Confidentialité » : vous y choisissez si vos conversations servent à améliorer les modèles.</p>`, ['cnil_generative', 'rgpd', 'ia_ce', 'secret_affaires', 'secret_defense'])
     + aideLimite() + etape('c_compte', `Ouvrez Claude`, '5 min', `<p>Allez sur <a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a> et connectez-vous. La formule gratuite permet de suivre le module. Elle limite le nombre de messages.</p>`
       + tirets([`regroupez vos demandes dans un seul message`, `donnez le contexte dès le début`, `ouvrez une nouvelle conversation quand la précédente devient longue`, `si la limite arrive, avancez sur cette page en attendant`])
       + `<p class="note">Ouvrez aussi « Paramètres », puis « Confidentialité ». Regardez si les conversations servent à améliorer les modèles, et décidez.</p>`)
@@ -1483,7 +1490,9 @@ const CHAPITRES = [
       + schema('projet') + schema('fichier')
       + `<p class="note">Fichier perdu ? Retéléchargez-le ici, il arrive dans « Téléchargements ».</p><div class="actions"><button type="button" class="btn" data-action="fiche-md">Télécharger la fiche du chantier (.md)</button></div>`
       + aide(`La fiche ne se charge pas ?`, `<p>Si l'ajout de fichier échoue, copiez le texte ci-dessous et collez-le à la fin de la zone « Instructions » du projet. Claude le relira à chaque conversation. C'est moins propre, mais cela marche partout.</p>` + consigne('fiche_chantier', `Texte de la fiche du chantier`), 'aide_fiche_texte') + liens(['claude_projets']))
-    + etape('c_instructions', `Collez les instructions`, '10 min', `<p>Les instructions sont déjà rédigées ci-dessous : copiez-les telles quelles dans votre projet. Les cases et les champs sont là pour les adapter. Dans les deux champs de texte, remplacez ce qui est entre accolades { } par votre situation.</p>
+    + etape('c_instructions', `Collez les instructions`, '10 min', `<p>Les instructions sont le texte dans le <b>cadre gris, en bas de cette étape</b>. Vous allez le copier dans votre projet Claude. Avant, vous pouvez l'adapter : c'est à cela que servent les cases et les champs.</p>
+      <p><b>Comment ça marche.</b> Chaque case cochée ajoute une phrase dans le cadre gris ; décochez-la, la phrase disparaît. Le menu « Format d'écriture » et les deux champs de texte se recopient dans le cadre gris, à l'endroit prévu. Regardez le cadre gris se mettre à jour quand vous changez quelque chose. Quand il vous convient, cliquez sur « Copier » et collez le tout dans la zone « Instructions » de votre projet.</p>
+      <h3>Ce que vous demandez à Claude (chaque case cochée = une phrase dans les instructions)</h3>
       <div class="coches">${coche('ip_questions', `Poser au plus trois questions avant de produire`, true)}${coche('ip_plan', `Proposer un plan court avant de rédiger ou de calculer`, true)}
       ${coche('ip_sources', `Marquer « à vérifier » toute référence dont il n'est pas sûr`, true)}${coche('ip_doutes', `Signaler ses doutes et les calculs à refaire à la main`, true)}
       ${coche('ip_change', `Dire en une phrase ce qui a changé`, true)}${coche('ip_contredire', `Nous contredire quand notre idée est trop large ou risquée`, true)}
@@ -1491,7 +1500,8 @@ const CHAPITRES = [
       <div class="champs">${champ('ip_format', `Format d'écriture des réponses`, { type: 'liste', options: LIB_FORMATS, sansMention: true, aide: `Sans choix, Claude répond en prose courte.` })}
       ${champ('ip_travail', `Qui nous sommes et notre façon de travailler`, { type: 'zone', lignes: 5, large: true, defaut: DEF_TRAVAIL, sansMention: true, aide: `Remplacez les accolades. Vous pouvez tout réécrire.` })}
       ${champ('ip_jamais', `Ce que Claude ne doit jamais faire`, { type: 'zone', lignes: 4, large: true, defaut: DEF_JAMAIS, sansMention: true, aide: `Remplacez les accolades. Ajoutez ce qui vous a déjà agacé chez une IA.` })}</div>`
-      + consigne('instructions', `Instructions du projet`) + schema('consigne') + `<p>Elles mentionnent votre projet : le groupe n'a pas encore choisi à ce stade. Claude l'apprendra dans la première conversation, ou vous revenez copier la version à jour après l'étape 3.</p>`)
+      + `<h3>Le texte à copier dans Claude</h3><p class="note">Il se met à jour avec vos cases et vos champs. Les passages entre accolades { } que vous n'avez pas remplacés restent tels quels : Claude les comprendra comme des blancs, mieux vaut les remplir.</p>`
+      + consigne('instructions', `Instructions du projet, à coller dans la zone « Instructions »`) + schema('consigne') + `<p>Elles mentionnent votre projet : le groupe n'a pas encore choisi à ce stade. Claude l'apprendra dans la première conversation, ou vous revenez copier la version à jour après l'étape 3.</p>`)
     + etape('c_test', `Vérifiez que Claude a compris (facultatif)`, '5 min', `<p>Envoyez cette consigne dans une conversation du projet. Comparez chaque réponse à ce que vous attendiez :</p>` + tirets([
         `rôle : assistant de votre groupe, pour un module sur la transition numérique du BTP`,
         `chantier : ${nb(CHANTIER.surface)} m², ${eur(CHANTIER.budget)} HT, ${CHANTIER.duree} mois`,

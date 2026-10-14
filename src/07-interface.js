@@ -68,6 +68,12 @@ function allerAncre(ch, ancre) {
   if (f) f.focus({ preventScroll: true });
   const bloc = el.closest('.bloc') || el; bloc.classList.add('flash'); setTimeout(() => bloc.classList.remove('flash'), 1700);
 }
+/* Montre que le cadre gris vient de changer : bref surlignage de la consigne */
+function signalerConsigne(id) {
+  const p = document.querySelector('pre[data-consigne="' + id + '"]'); if (!p) return;
+  const b = p.closest('.consigne'); if (!b) return;
+  b.classList.remove('flash'); void b.offsetWidth; b.classList.add('flash'); setTimeout(() => b.classList.remove('flash'), 1700);
+}
 function majLeger() { const C = calcul(); majNav(C); majEtat(C); majConsignes(); majCalculs(); majBarre(); majProchaine(C); majCompteurs(); verifierRappel(); }
 
 function rendre(haut) {
@@ -273,7 +279,7 @@ document.addEventListener('input', e => {
   const c = e.target.getAttribute && e.target.getAttribute('data-champ');
   if (!c) return;
   S.champs[c] = e.target.value; toucher();
-  clearTimeout(minuteurLeger); minuteurLeger = setTimeout(majLeger, 180);
+  clearTimeout(minuteurLeger); minuteurLeger = setTimeout(() => { majLeger(); if (c === 'ip_travail' || c === 'ip_jamais') signalerConsigne('instructions'); }, 180);
 });
 document.addEventListener('change', e => {
   const t = e.target;
@@ -286,10 +292,10 @@ document.addEventListener('change', e => {
     return;
   }
   if (t.hasAttribute('data-fait')) { const id = t.getAttribute('data-fait'); S.faits[id] = t.checked; toucher(); t.closest('.etape').classList.toggle('faite', t.checked); majLeger(); return; }
-  if (t.hasAttribute('data-coche')) { S.champs[t.getAttribute('data-coche')] = t.checked ? 'oui' : 'non'; toucher(); majLeger(); return; }
+  if (t.hasAttribute('data-coche')) { const k = t.getAttribute('data-coche'); S.champs[k] = t.checked ? 'oui' : 'non'; toucher(); majLeger(); if (k.indexOf('ip_') === 0) signalerConsigne('instructions'); return; }
   if (t.tagName === 'SELECT' && t.hasAttribute('data-champ')) {
     const c = t.getAttribute('data-champ'); S.champs[c] = t.value; toucher();
-    if (c === 'id_classe' || c === 'vr_cat') rendre(false); else majLeger();
+    if (c === 'id_classe' || c === 'vr_cat') rendre(false); else { majLeger(); if (c === 'ip_format') signalerConsigne('instructions'); }
   }
 });
 document.addEventListener('click', e => {

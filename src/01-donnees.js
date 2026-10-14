@@ -51,6 +51,8 @@ const SOURCES = {
   ia_ce: { t: `Commission européenne – Législation sur l'IA et calendrier d'application`, u: 'https://digital-strategy.ec.europa.eu/fr/policies/regulatory-framework-ai' },
   ia_texte: { t: `Règlement (UE) 2024/1689 sur l'intelligence artificielle – texte officiel`, u: 'https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=OJ:L_202401689' },
   anssi: { t: `ANSSI – la directive NIS 2`, u: 'https://cyber.gouv.fr/' },
+  secret_affaires: { t: `Légifrance – Code de commerce, protection du secret des affaires (articles L151-1 et suivants, à vérifier)`, u: 'https://www.legifrance.gouv.fr/' },
+  secret_defense: { t: `Légifrance – Code pénal, atteintes au secret de la défense nationale (articles 413-9 et suivants, à vérifier)`, u: 'https://www.legifrance.gouv.fr/' },
   claude_projets: { t: `Aide de Claude – créer et gérer des projets (en anglais)`, u: 'https://support.claude.com/en/articles/9519177' },
   claude_limites: { t: `Aide de Claude – bien utiliser ses limites d'usage (en anglais)`, u: 'https://support.claude.com/en/articles/9797557' }
 };
