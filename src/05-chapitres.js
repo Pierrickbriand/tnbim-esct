@@ -105,7 +105,7 @@ const CHAPITRES = [
         `<b>les technologies émergentes</b> : drones et scan 3D pour relever l'existant, réalité augmentée sur le chantier, robots et impression 3D, jumeau numérique du bâtiment en exploitation`])
       + `<p><b>Dans ce module, nous nous consacrons à l'IA</b> : vous l'utilisez vous-mêmes avec Claude, et vous étudiez ce qu'elle change dans la stratégie, le cadre juridique et l'organisation d'un projet de construction.</p>`)
     + bloc(`Les deux sessions`, `<ul class="parcours">
-      <li><b>Première session de cours</b>Vous réglez Claude, vous découvrez le chantier fictif, vous choisissez votre projet. Vous écrivez le cadrage initial sans IA, puis vous ouvrez le journal.</li>
+      <li><b>Première session de cours</b>Vous réglez Claude, vous découvrez le chantier fictif, vous choisissez votre projet. Vous écrivez le cadrage initial sans IA, vous lancez Claude, puis vous ouvrez le journal.</li>
       <li class="entre"><b>Entre les deux sessions</b>Vous avancez le projet, vous vérifiez les références juridiques sur les sources officielles, vous tenez le journal. Envoi des fichiers au formateur, par e-mail, au plus tard ${DEPOTL()}.</li>
       <li><b>Dernière session de cours</b>Soutenance orale de votre projet, ${CONFIG.soutenance.total} minutes par groupe, avec le support de dix diapositives au plus.</li></ul>`)
     + etape('depart_identite', `Dites qui vous êtes`, '', `<p>Ces informations servent aux consignes, au journal et au dossier. Elles restent sur l'appareil : la page n'envoie rien sur Internet. Les dates vous sont données par votre formateur.</p>
@@ -238,6 +238,13 @@ const CHAPITRES = [
       <p>Ce qui change d'un projet à l'autre, c'est l'angle principal, rattaché à une ou deux des cinq missions du manager de projets BTP. Le tableau le montre. Chaque projet comporte aussi un champ sur ce qu'il apporte aux autres missions.</p>`
       + tableau(['Mission du manager de projets BTP', ...PROJETS.map(p => p.court)], MISSIONS.map(m => [m, ...PROJETS.map(p => p.missions.indexOf(m) >= 0 ? (p.id === choix ? '<b>● votre angle</b>' : '●') : '')])))
     + decision('projet_perim')
+    + decision('cadrage')
+    + etape('j_cadrage', `Écrivez le cadrage initial, sans IA`, '20 min', `<p>Écrivez à la main, avant d'ouvrir Claude pour le projet. Quelques lignes suffisent. C'est votre point de départ : le jury le comparera à ce que vous présenterez, pour mesurer ce que le travail et l'IA ont changé.</p>
+      <div class="champs">${champ('cad_date', `Date d'écriture`, { ex: '14 octobre', requis: true, sansMention: true })}
+      ${champ('cad_comprehension', `Notre compréhension du problème`, { type: 'zone', large: true, requis: true, sansMention: true, ex: `Le chantier Rive Nord doit décider jusqu'où numériser. Le problème, c'est …` })}
+      ${champ('cad_hypotheses', `Nos hypothèses`, { type: 'zone', large: true, requis: true, sansMention: true, ex: `Nous supposons que … (reprendre « ce qui manque à la fiche »)` })}
+      ${champ('cad_attentes', `Ce que nous attendons de l'outil`, { type: 'zone', large: true, requis: true, sansMention: true, ex: `Des pistes de critères, des ordres de grandeur à vérifier, une relecture. Pas la décision.` })}</div>
+      <p class="note">Une fois écrit, passez aux étapes suivantes. Vous demanderez à Claude de comparer ce cadrage à son avis juste après la consigne de démarrage.</p>`)
     + etape('p_entraineur', `Entraînez votre consigne de démarrage`, '15 min', `<p>Une consigne bien rédigée donne une meilleure première réponse, et moins de messages perdus. L'« Entraîneur de prompt », l'outil de votre formateur, note votre consigne sur cinq points : le rôle donné à l'IA, l'action demandée, le contexte, le public et la forme attendue. Il dit ce qui manque et vous fait recommencer.</p>` + pas([
         `Copiez la consigne de démarrage de l'étape suivante (bouton « Copier »).`,
         `Collez-la dans l'entraîneur ci-dessous, dans la zone « Votre prompt », puis cliquez sur « Analyser mon prompt ».`,
@@ -246,7 +253,8 @@ const CHAPITRES = [
       + `<div class="cadre-outil"><iframe src="${OUTILS.entraineur}" title="Entraîneur de prompt" loading="lazy"></iframe></div>
       <div class="actions"><a class="btn" href="${OUTILS.entraineur}" target="_blank" rel="noopener">Ouvrir l'entraîneur dans un nouvel onglet</a></div>
       <div class="champs">${champ('p_consigne', `Votre consigne de démarrage, améliorée dans l'entraîneur`, { type: 'zone', lignes: 6, large: true, ex: `Collez ici la version finale, après l'analyse de l'entraîneur.`, aide: `Facultatif mais recommandé : elle figure dans votre dossier, à côté de la consigne de départ, et montre votre progrès.` })}</div>`)
-    + etape('p_depart', `Lancez le projet avec Claude`, '20 min', `<p>Envoyez cette consigne dans votre projet Claude, ou la version améliorée dans l'entraîneur. <b>Avant</b>, écrivez le cadrage initial à l'étape 5 « Journal et références » : le cadrage s'écrit sans IA, avant le premier échange.</p>` + consigne('demarrage', `Consigne de démarrage`) + schema('consigne')
+    + etape('p_depart', `Lancez le projet avec Claude`, '20 min', `<p>Envoyez cette consigne dans votre projet Claude, ou la version améliorée dans l'entraîneur. Votre cadrage initial est déjà écrit (étape précédente) : il s'écrit sans IA, avant le premier échange.</p>` + consigne('demarrage', `Consigne de démarrage`) + schema('consigne')
+      + `<p><b>Ensuite, faites comparer votre cadrage.</b> Une fois Claude lancé, dans la même conversation, envoyez la consigne ci-dessous. Elle reprend le cadrage que vous venez d'écrire. Notez le résultat dans le journal (étape 5).</p>` + consigne('cadrage_ia', `Consigne de comparaison (après le démarrage)`)
       + `<p><b>Le plan en cinq lignes.</b> Claude vous propose un plan. Discutez-le, corrigez-le, puis écrivez ici <i>votre</i> plan, pas le sien : cinq étapes, dans l'ordre, avec pour chacune qui s'en charge et ce que vous vérifiez à la main. Ce plan ira dans la section « Le projet » du dossier et sur la diapositive « Notre méthode ». À l'oral, le jury comparera ce plan à ce que vous avez réellement fait : les écarts sont normaux, à condition de les expliquer.</p>
       <div class="champs">${champ('p_plan', `Le plan retenu par le groupe, en cinq lignes`, { type: 'zone', lignes: 6, large: true, requis: true, sansMention: true, ex: `1. Décrire les scénarios (tous, première session) ; vérification : relecture croisée.\n2. Chercher les ordres de grandeur (Prénom, avant le …) ; vérification : une source par chiffre.\n3. …` })}</div>`);
   }
@@ -267,13 +275,7 @@ const CHAPITRES = [
       <p><b>Quand ajouter une ligne.</b> Chaque fois que Claude a changé votre travail : une consigne qui a donné un résultat que vous avez utilisé, un résultat que vous avez corrigé, une réponse que vous avez rejetée. Pas besoin de noter « bonjour » ni les reformulations. Une bonne session de travail donne deux à quatre lignes.</p>
       <p><b>Comment.</b> Tout de suite après l'échange, pas le soir. Dans l'ordre : la date, l'outil (« Claude, projet du groupe »), ce que vous vouliez, la phrase de votre consigne qui a fait la différence, ce que Claude a donné, votre décision (gardé, modifié ou rejeté) et pourquoi, puis comment vous avez vérifié : quel document ouvert, à quelle date. Aucune donnée confidentielle ou personnelle.</p>
       <p><b>Trois moments obligatoires.</b> Le cadrage initial, écrit sans IA avant tout. Le journal, au fil de l'eau. Le bilan, avant l'envoi.</p>` + schema('journal'))
-    + decision('cadrage')
-    + etape('j_cadrage', `Cadrage initial, écrit sans IA`, '20 min', `<p>Écrivez à la main, avant d'ouvrir Claude pour le projet. Quelques lignes suffisent. C'est votre point de départ : le jury le comparera à ce que vous présenterez, pour mesurer ce que le travail et l'IA ont changé.</p>
-      <div class="champs">${champ('cad_date', `Date d'écriture`, { ex: '14 octobre', requis: true, sansMention: true })}
-      ${champ('cad_comprehension', `Notre compréhension du problème`, { type: 'zone', large: true, requis: true, sansMention: true, ex: `Le chantier Rive Nord doit décider jusqu'où numériser. Le problème, c'est …` })}
-      ${champ('cad_hypotheses', `Nos hypothèses`, { type: 'zone', large: true, requis: true, sansMention: true, ex: `Nous supposons que … (reprendre « ce qui manque à la fiche »)` })}
-      ${champ('cad_attentes', `Ce que nous attendons de l'outil`, { type: 'zone', large: true, requis: true, sansMention: true, ex: `Des pistes de critères, des ordres de grandeur à vérifier, une relecture. Pas la décision.` })}</div>
-      <p class="note">Ensuite seulement, vous pouvez demander à Claude de le comparer à son avis. Notez-le dans le journal.</p>` + consigne('cadrage_ia', `Consigne de comparaison (après l'écriture)`))
+    + repere(`Le cadrage initial est à l'étape 3`, `<p>Vous l'avez écrit à l'étape 3 « Votre projet », avant de lancer Claude. Il figure dans votre dossier. La consigne qui le fait comparer par Claude est au même endroit, juste après la consigne de démarrage : vous n'avez rien à recopier ici.</p>`)
     + decision('journal')
     + aide(`Exemple de ligne du journal`, tableau(['Date', 'Outil', 'Objectif', 'Consigne clé', 'Résultat obtenu', 'Gardé, modifié ou rejeté, et pourquoi', 'Vérification'], [[
         '14/10', 'Claude, projet du groupe', 'Grille de benchmarking', '« Six critères observables, une source par critère, dis ce que tu ne sais pas »', 'Grille de six critères, deux sources introuvables',

@@ -87,3 +87,8 @@ Ne pas changer les identifiants de champs et de choix pendant qu'un groupe trava
 5. Ajouter l'outil à la page d'accueil du dépôt (index.html à la racine), si souhaité.
 6. Option : autres fichiers du chantier (planning détaillé, extraits de contrat fictifs).
 7. Option : profil de charge des effectifs plus réaliste que l'effectif maximal constant.
+
+## Livraison 6 : ordre du cadrage (retour étudiant du 14 octobre 2026)
+- Constat : le cadrage initial était à l'étape 5, mais la conversation avec Claude démarre à l'étape 3. L'étudiant devait revenir en arrière pour copier la réponse.
+- Correction : l'étape « Écrivez le cadrage initial, sans IA » passe dans « 3. Votre projet », avant l'entraîneur. La consigne de comparaison suit la consigne de démarrage. L'étape 5 garde un simple renvoi.
+- Identifiants de champs inchangés (cad_*, decision cadrage). L'alerte « cadrage non écrit » renvoie maintenant vers l'étape 3.

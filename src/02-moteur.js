@@ -97,7 +97,7 @@ function alertes(C) {
   const a = [], d = C.drap, j = C.j;
   if (d.donneesReelles) a.push(['rouge', `Données réelles : changez ce choix avant d'aller plus loin.`, 'chantier']);
   if (d.sansVerif) a.push(['rouge', `Références copiées sans vérification : ouvrez chaque source officielle.`, 'journal']);
-  if (d.cadrageIA) a.push(['orange', `Cadrage initial non écrit avant Claude : reprenez-le à la main.`, 'journal']);
+  if (d.cadrageIA) a.push(['orange', `Cadrage initial non écrit avant Claude : reprenez-le à la main.`, 'projet']);
   if (d.journalTardif) a.push(['orange', `Journal reconstitué à la fin : sans journal, l'usage de l'IA est plafonné à 1,5 point sur 3.`, 'journal']);
   if (d.tropLarge || j.charge >= 65) a.push(['orange', `Périmètre trop large pour l'oral.`, 'projet']);
   if (j.fiabilite <= 35) a.push(['orange', `Sources fragiles : que reste-t-il à vérifier ?`, 'journal']);

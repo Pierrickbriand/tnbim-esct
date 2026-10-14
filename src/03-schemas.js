@@ -32,7 +32,7 @@ const SCHEMAS = {
       s += G.t(24, 318, 'Enregistrez le fichier de projet à chaque pause (bouton « Enregistrer », en haut à gauche).', { s: 11, b: true, c: '#065F46' });
       return s;
     },
-    legende: [`Aujourd'hui : du départ à l'étape 3, et l'ouverture du journal (étape 5, cadrage initial).`, `Entre les deux sessions : le travail du projet (étape 4) et le journal (étape 5), jusqu'au dépôt.`, `Dernière session : l'oral, avec le support déposé la veille.`]
+    legende: [`Aujourd'hui : du départ à l'étape 3 (cadrage initial écrit sans IA, puis lancement de Claude), et l'ouverture du journal (étape 5).`, `Entre les deux sessions : le travail du projet (étape 4) et le journal (étape 5), jusqu'au dépôt.`, `Dernière session : l'oral, avec le support déposé la veille.`]
   },
   telechargement: {
     titre: `Où arrive le fichier téléchargé`,
