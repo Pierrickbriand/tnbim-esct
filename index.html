@@ -415,6 +415,8 @@ details.aide .picto{flex:none;color:var(--accent-fonce)}
 .cadre-outil{margin-top:14px;border:1px solid var(--trait-fort);background:#fff}
 .cadre-outil iframe{display:block;width:100%;height:760px;border:0}
 @media print{.cadre-outil{display:none}}
+.sources-verif li{margin-bottom:8px}.sources-verif .note{display:block;margin-top:2px}
+.bloc.ou-verifier{border-left:3px solid var(--accent)}
 
 </style>
 </head>
@@ -528,6 +530,37 @@ const SOURCES = {
   claude_projets: { t: `Aide de Claude – créer et gérer des projets (en anglais)`, u: 'https://support.claude.com/en/articles/9519177' },
   claude_limites: { t: `Aide de Claude – bien utiliser ses limites d'usage (en anglais)`, u: 'https://support.claude.com/en/articles/9797557' }
 };
+/* Où vérifier une référence : sources officielles, par catégorie. Aucun article n'est cité : l'étudiant ouvre et lit. */
+const OU_VERIFIER = [
+  { id: 'lois', l: `Lois, codes, décrets et jurisprudence (France)`, liens: [
+    ['Légifrance', 'https://www.legifrance.gouv.fr/', `Tous les codes (civil, commerce, travail, commande publique), les lois, décrets et arrêtés, et les décisions de justice. Cherchez par mot ou par numéro d'article. La date de la version en vigueur s'affiche en haut du texte.`]] },
+  { id: 'marches', l: `Marchés de travaux, publics et privés`, liens: [
+    ['Direction des affaires juridiques (economie.gouv.fr)', 'https://www.economie.gouv.fr/daj', `Cahiers des clauses administratives générales (CCAG), guides et fiches sur la commande publique.`],
+    ['Légifrance', 'https://www.legifrance.gouv.fr/', `Pour le Code de la commande publique : cherchez le code par son nom, puis l'article.`],
+    ['AFNOR', 'https://www.afnor.org/', `Pour les marchés privés, la norme NF P 03-001 (cahier des clauses administratives générales des marchés privés). Le texte est payant : la fiche de la norme, publique, donne son existence et sa date.`]] },
+  { id: 'donnees', l: `Données personnelles : RGPD et CNIL`, liens: [
+    ['CNIL – le RGPD article par article', 'https://www.cnil.fr/fr/reglement-europeen-protection-donnees', `Le texte du règlement, article par article, avec les liens vers les fiches pratiques de la CNIL.`],
+    ['CNIL – questions-réponses sur l\'IA générative', 'https://www.cnil.fr/fr/les-questions-reponses-de-la-cnil-sur-lutilisation-dun-systeme-dia-generative', `Ce qu'une entreprise peut confier, ou non, à un service d'IA générative.`],
+    ['CNIL – intelligence artificielle', 'https://www.cnil.fr/fr/technologies/intelligence-artificielle-ia', `Les recommandations de la CNIL sur l'IA.`]] },
+  { id: 'ia', l: `Intelligence artificielle : règlement européen`, liens: [
+    ['Commission européenne – cadre réglementaire de l\'IA', 'https://digital-strategy.ec.europa.eu/fr/policies/regulatory-framework-ai', `Présentation du règlement et de son calendrier d'application.`],
+    ['EUR-Lex – règlement (UE) 2024/1689', 'https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=OJ:L_202401689', `Le texte officiel du règlement, en français. Vérifiez la date de la version consolidée.`]] },
+  { id: 'cyber', l: `Cybersécurité : directive NIS 2, ANSSI`, liens: [
+    ['ANSSI – cyber.gouv.fr', 'https://cyber.gouv.fr/', `L'agence nationale de la sécurité des systèmes d'information : guides, obligations des entreprises, transposition de NIS 2.`],
+    ['EUR-Lex', 'https://eur-lex.europa.eu/homepage.html?locale=fr', `Pour la directive NIS 2, cherchez « directive (UE) 2022/2555 ».`]] },
+  { id: 'normes', l: `Normes et BIM`, liens: [
+    ['AFNOR', 'https://www.afnor.org/', `Normes NF et ISO, dont la série NF EN ISO 19650 sur la gestion de l'information avec le BIM. Le texte des normes est payant ; leur existence, leur date et leur statut se vérifient sur la fiche publique.`]] },
+  { id: 'travail', l: `Droit du travail et vie des entreprises`, liens: [
+    ['Entreprendre.service-public.fr', 'https://entreprendre.service-public.fr/', `Fiches officielles pour les entreprises : embauche, formation, obligations de l'employeur.`],
+    ['Légifrance – Code du travail', 'https://www.legifrance.gouv.fr/', `Cherchez « Code du travail », puis l'article.`]] }
+];
+const VERDICTS = [
+  ['exacte', 'Exacte', `la source dit ce que la référence affirme, à la date de consultation`],
+  ['inexacte', 'Inexacte', `la source existe, mais ne dit pas cela, ou pas ainsi`],
+  ['introuvable', 'Introuvable', `la référence n'apparaît pas sur la source officielle`],
+  ['perimee', 'Périmée', `la source existe, mais le texte a été abrogé ou modifié`]
+];
+
 const OUTILS = {
   calibrateur: 'https://pierrickbriand.github.io/Calibrateur-de-preferences-Claude/',
   entraineur: 'https://pierrickbriand.github.io/entraineur-de-prompt/'
@@ -1177,6 +1210,17 @@ const cel = (cle, o) => { o = o || {}; REG.champs[cle] = { l: o.l || cle, ch: CH
   if (o.court) return `<input type="text" data-champ="${cle}" value="${esc(v(cle))}" aria-label="${esc(o.l || '')}" autocomplete="off">`;
   return `<textarea data-champ="${cle}" rows="2" aria-label="${esc(o.l || '')}">${esc(v(cle))}</textarea>`; };
 
+function blocOuVerifier() {
+  const cat = OU_VERIFIER.find(x => x.id === v('vr_cat')) || OU_VERIFIER[0];
+  return bloc(`Où vérifier une référence`, `<p>Une référence se vérifie sur la source qui publie le texte, jamais sur un site qui le commente. Choisissez la famille de la référence : les sources officielles s'affichent, avec ce que vous y trouverez.</p>
+      <div class="champs">${champ('vr_cat', `Famille de la référence`, { type: 'liste', options: OU_VERIFIER.map(x => [x.id, x.l]), sansMention: true })}</div>
+      <h3>${cat.l}</h3><ul class="sources sources-verif">${cat.liens.map(l => `<li><a href="${l[1]}" target="_blank" rel="noopener">${l[0]}</a><span class="note">${l[2]}</span></li>`).join('')}</ul>
+      <h3>Comment conclure</h3>` + pas([
+        `Ouvrez la source, cherchez le texte exact (numéro d'article, nom du règlement, de la norme).`,
+        `Lisez le passage. Comparez-le à ce que dit votre référence ou ce qu'a dit Claude.`,
+        `Notez dans la fiche de contrôle : la référence, la source, la date du jour et le verdict.`])
+      + `<dl class="glossaire">${VERDICTS.map(x => `<dt>${x[1]}</dt><dd>${x[2]}.</dd>`).join('')}</dl>`, 'ou-verifier');
+}
 function grilleHtml() {
   const s = CONFIG.soutenance;
   return `<p>Soutenance de <b>${s.total} minutes par groupe</b> : ${s.expose} minutes d'exposé, ${s.questions} minutes de questions. Chaque membre prend la parole. Note sur 20, selon sept critères. Chaque critère est jugé sur quatre niveaux : ${NIVEAUX_GRILLE.join(', ')}.</p>`
@@ -1364,6 +1408,7 @@ const CHAPITRES = [
     + decision('sources')
     + repere(`Références juridiques à vérifier`, `<p>Voici les thèmes du module. Pour chacun, la fiche de contrôle demande la référence examinée, la source officielle consultée, la date et un verdict : exacte, inexacte, introuvable ou périmée.</p>`
         + tirets(THEMES_JURIDIQUES), ['legifrance', 'daj', 'rgpd', 'ia_ce', 'ia_texte', 'anssi'])
+    + blocOuVerifier()
     + etape('j_refs', `Fiche de contrôle des références`, '30 min', `<p>Demandez d'abord à Claude des pistes, puis ouvrez chaque source. Le verdict compte plus que la piste : une référence « introuvable » bien notée vaut mieux qu'une référence copiée sans l'avoir lue.</p>
       <div class="champs">${champ('vr_theme', `Thème en cours`, { type: 'liste', options: THEMES_JURIDIQUES.map(t => [t, t]), sansMention: true })}</div>` + consigne('verif_refs', `Consigne pour obtenir des pistes`) + blocFicheControle())
     + etape('j_bilan', `Bilan, à remplir avant le dépôt`, '15 min', `<p>Trois questions, trois réponses honnêtes de quelques lignes. Elles ferment le journal et nourrissent la diapositive « Les limites ».</p><div class="champs">${champ('bi_perdu', `Ce que nous aurions perdu en travaillant sans IA`, { type: 'zone', large: true, requis: true, sansMention: true })}
@@ -1506,6 +1551,7 @@ function blocContrats() {
     + etape('pk_cadre', `Décrivez le cadre contractuel`, '30 min', `<p>Le chantier fictif n'a pas de contrat réel. Décrivez en quelques lignes les documents que vous supposez : un marché privé de travaux par lot, un cahier des charges, une convention BIM. Puis dites ce que vous savez du cadre qui s'applique, et ce qu'il faudra vérifier.</p>
       <div class="champs">${champ('pk_docs', `Documents contractuels supposés`, { type: 'zone', large: true, requis: R, sansMention: true })}
       ${champ('pk_cadre', `Cadre applicable (marché privé ou public, norme, cahier des clauses) : ce que vous savez, ce qu'il faut vérifier`, { type: 'zone', large: true, requis: R, sansMention: true })}</div>` + consigne('travail_contrats', `Consigne pour lister les clauses sensibles`))
+    + blocOuVerifier()
     + etape('pk_fiches', `Fiches de veille`, '60 min', `<p>Une fiche par cas. Au moins deux fiches complètes. Une fiche « vérifié » indique la source officielle ouverte et sa date. Sinon, elle reste « à vérifier ».</p>` + fiches)
     + etape('pk_reco', `Synthèse`, '20 min', `<p>Trois points de vigilance : ce qu'un manager de projets doit faire avant de numériser le chantier, en une phrase chacun. Ils iront dans le dossier et sur la diapositive principale.</p><div class="champs">${champ('pk_synthese', `Les trois points de vigilance du manager de projets`, { type: 'zone', lignes: 4, large: true, requis: R, sansMention: true, ex: `1. Signer la convention BIM avant … 2. Informer les salariés de … 3. Faire relire par … tout document rédigé avec une IA.` })}
       ${forcesFaiblesses('pk_ff', R)}
@@ -1562,7 +1608,7 @@ function resultatCle() {
   const p = v('pj_choix');
   if (p === 'strategie') { const r = calcStrat(); return r.ok ? `Option en tête : ${r.noms[r.mieux]} (${nb(r.t[r.mieux], 2)} sur 10).` : ''; }
   if (p === 'chantier') { const L = lignesSuivi().filter(x => x.ok); if (!L.length) return ''; const e = L.filter(x => x.spi < 0.9 || x.cpi < 0.9).length; return `${L.length} lots suivis, ${e} en écart.`; }
-  if (p === 'contrats') { const f = [1, 2, 3, 4].filter(n => rempli('ck' + n + '_cas')); const ver = f.filter(n => v('ck' + n + '_statut') === 'verifie').length; return `${f.length} fiches de veille, ${ver} vérifiées sur source officielle.`; }
+  if (p === 'contrats') { const f = [1, 2, 3, 4].filter(n => rempli('ck' + n + '_cas')); const ver = f.filter(n => v('ck' + n + '_statut') === 'verifie').length; return `${f.length} fiche${f.length > 1 ? 's' : ''} de veille, ${ver} vérifiée${ver > 1 ? 's' : ''} sur source officielle.`; }
   if (p === 'rh') { const E = effectifsMois(), pic = E.reduce((a, b) => b.tot > a.tot ? b : a); return `Pointe de ${pic.tot} personnes au mois ${pic.m}.`; }
   return '';
 }
@@ -1968,7 +2014,7 @@ document.addEventListener('change', e => {
   if (t.hasAttribute('data-coche')) { S.champs[t.getAttribute('data-coche')] = t.checked ? 'oui' : 'non'; toucher(); majLeger(); return; }
   if (t.tagName === 'SELECT' && t.hasAttribute('data-champ')) {
     const c = t.getAttribute('data-champ'); S.champs[c] = t.value; toucher();
-    if (c === 'id_classe') rendre(false); else majLeger();
+    if (c === 'id_classe' || c === 'vr_cat') rendre(false); else majLeger();
   }
 });
 document.addEventListener('click', e => {

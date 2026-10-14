@@ -62,6 +62,17 @@ const cel = (cle, o) => { o = o || {}; REG.champs[cle] = { l: o.l || cle, ch: CH
   if (o.court) return `<input type="text" data-champ="${cle}" value="${esc(v(cle))}" aria-label="${esc(o.l || '')}" autocomplete="off">`;
   return `<textarea data-champ="${cle}" rows="2" aria-label="${esc(o.l || '')}">${esc(v(cle))}</textarea>`; };
 
+function blocOuVerifier() {
+  const cat = OU_VERIFIER.find(x => x.id === v('vr_cat')) || OU_VERIFIER[0];
+  return bloc(`Où vérifier une référence`, `<p>Une référence se vérifie sur la source qui publie le texte, jamais sur un site qui le commente. Choisissez la famille de la référence : les sources officielles s'affichent, avec ce que vous y trouverez.</p>
+      <div class="champs">${champ('vr_cat', `Famille de la référence`, { type: 'liste', options: OU_VERIFIER.map(x => [x.id, x.l]), sansMention: true })}</div>
+      <h3>${cat.l}</h3><ul class="sources sources-verif">${cat.liens.map(l => `<li><a href="${l[1]}" target="_blank" rel="noopener">${l[0]}</a><span class="note">${l[2]}</span></li>`).join('')}</ul>
+      <h3>Comment conclure</h3>` + pas([
+        `Ouvrez la source, cherchez le texte exact (numéro d'article, nom du règlement, de la norme).`,
+        `Lisez le passage. Comparez-le à ce que dit votre référence ou ce qu'a dit Claude.`,
+        `Notez dans la fiche de contrôle : la référence, la source, la date du jour et le verdict.`])
+      + `<dl class="glossaire">${VERDICTS.map(x => `<dt>${x[1]}</dt><dd>${x[2]}.</dd>`).join('')}</dl>`, 'ou-verifier');
+}
 function grilleHtml() {
   const s = CONFIG.soutenance;
   return `<p>Soutenance de <b>${s.total} minutes par groupe</b> : ${s.expose} minutes d'exposé, ${s.questions} minutes de questions. Chaque membre prend la parole. Note sur 20, selon sept critères. Chaque critère est jugé sur quatre niveaux : ${NIVEAUX_GRILLE.join(', ')}.</p>`
@@ -249,6 +260,7 @@ const CHAPITRES = [
     + decision('sources')
     + repere(`Références juridiques à vérifier`, `<p>Voici les thèmes du module. Pour chacun, la fiche de contrôle demande la référence examinée, la source officielle consultée, la date et un verdict : exacte, inexacte, introuvable ou périmée.</p>`
         + tirets(THEMES_JURIDIQUES), ['legifrance', 'daj', 'rgpd', 'ia_ce', 'ia_texte', 'anssi'])
+    + blocOuVerifier()
     + etape('j_refs', `Fiche de contrôle des références`, '30 min', `<p>Demandez d'abord à Claude des pistes, puis ouvrez chaque source. Le verdict compte plus que la piste : une référence « introuvable » bien notée vaut mieux qu'une référence copiée sans l'avoir lue.</p>
       <div class="champs">${champ('vr_theme', `Thème en cours`, { type: 'liste', options: THEMES_JURIDIQUES.map(t => [t, t]), sansMention: true })}</div>` + consigne('verif_refs', `Consigne pour obtenir des pistes`) + blocFicheControle())
     + etape('j_bilan', `Bilan, à remplir avant le dépôt`, '15 min', `<p>Trois questions, trois réponses honnêtes de quelques lignes. Elles ferment le journal et nourrissent la diapositive « Les limites ».</p><div class="champs">${champ('bi_perdu', `Ce que nous aurions perdu en travaillant sans IA`, { type: 'zone', large: true, requis: true, sansMention: true })}

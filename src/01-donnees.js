@@ -53,6 +53,37 @@ const SOURCES = {
   claude_projets: { t: `Aide de Claude – créer et gérer des projets (en anglais)`, u: 'https://support.claude.com/en/articles/9519177' },
   claude_limites: { t: `Aide de Claude – bien utiliser ses limites d'usage (en anglais)`, u: 'https://support.claude.com/en/articles/9797557' }
 };
+/* Où vérifier une référence : sources officielles, par catégorie. Aucun article n'est cité : l'étudiant ouvre et lit. */
+const OU_VERIFIER = [
+  { id: 'lois', l: `Lois, codes, décrets et jurisprudence (France)`, liens: [
+    ['Légifrance', 'https://www.legifrance.gouv.fr/', `Tous les codes (civil, commerce, travail, commande publique), les lois, décrets et arrêtés, et les décisions de justice. Cherchez par mot ou par numéro d'article. La date de la version en vigueur s'affiche en haut du texte.`]] },
+  { id: 'marches', l: `Marchés de travaux, publics et privés`, liens: [
+    ['Direction des affaires juridiques (economie.gouv.fr)', 'https://www.economie.gouv.fr/daj', `Cahiers des clauses administratives générales (CCAG), guides et fiches sur la commande publique.`],
+    ['Légifrance', 'https://www.legifrance.gouv.fr/', `Pour le Code de la commande publique : cherchez le code par son nom, puis l'article.`],
+    ['AFNOR', 'https://www.afnor.org/', `Pour les marchés privés, la norme NF P 03-001 (cahier des clauses administratives générales des marchés privés). Le texte est payant : la fiche de la norme, publique, donne son existence et sa date.`]] },
+  { id: 'donnees', l: `Données personnelles : RGPD et CNIL`, liens: [
+    ['CNIL – le RGPD article par article', 'https://www.cnil.fr/fr/reglement-europeen-protection-donnees', `Le texte du règlement, article par article, avec les liens vers les fiches pratiques de la CNIL.`],
+    ['CNIL – questions-réponses sur l\'IA générative', 'https://www.cnil.fr/fr/les-questions-reponses-de-la-cnil-sur-lutilisation-dun-systeme-dia-generative', `Ce qu'une entreprise peut confier, ou non, à un service d'IA générative.`],
+    ['CNIL – intelligence artificielle', 'https://www.cnil.fr/fr/technologies/intelligence-artificielle-ia', `Les recommandations de la CNIL sur l'IA.`]] },
+  { id: 'ia', l: `Intelligence artificielle : règlement européen`, liens: [
+    ['Commission européenne – cadre réglementaire de l\'IA', 'https://digital-strategy.ec.europa.eu/fr/policies/regulatory-framework-ai', `Présentation du règlement et de son calendrier d'application.`],
+    ['EUR-Lex – règlement (UE) 2024/1689', 'https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=OJ:L_202401689', `Le texte officiel du règlement, en français. Vérifiez la date de la version consolidée.`]] },
+  { id: 'cyber', l: `Cybersécurité : directive NIS 2, ANSSI`, liens: [
+    ['ANSSI – cyber.gouv.fr', 'https://cyber.gouv.fr/', `L'agence nationale de la sécurité des systèmes d'information : guides, obligations des entreprises, transposition de NIS 2.`],
+    ['EUR-Lex', 'https://eur-lex.europa.eu/homepage.html?locale=fr', `Pour la directive NIS 2, cherchez « directive (UE) 2022/2555 ».`]] },
+  { id: 'normes', l: `Normes et BIM`, liens: [
+    ['AFNOR', 'https://www.afnor.org/', `Normes NF et ISO, dont la série NF EN ISO 19650 sur la gestion de l'information avec le BIM. Le texte des normes est payant ; leur existence, leur date et leur statut se vérifient sur la fiche publique.`]] },
+  { id: 'travail', l: `Droit du travail et vie des entreprises`, liens: [
+    ['Entreprendre.service-public.fr', 'https://entreprendre.service-public.fr/', `Fiches officielles pour les entreprises : embauche, formation, obligations de l'employeur.`],
+    ['Légifrance – Code du travail', 'https://www.legifrance.gouv.fr/', `Cherchez « Code du travail », puis l'article.`]] }
+];
+const VERDICTS = [
+  ['exacte', 'Exacte', `la source dit ce que la référence affirme, à la date de consultation`],
+  ['inexacte', 'Inexacte', `la source existe, mais ne dit pas cela, ou pas ainsi`],
+  ['introuvable', 'Introuvable', `la référence n'apparaît pas sur la source officielle`],
+  ['perimee', 'Périmée', `la source existe, mais le texte a été abrogé ou modifié`]
+];
+
 const OUTILS = {
   calibrateur: 'https://pierrickbriand.github.io/Calibrateur-de-preferences-Claude/',
   entraineur: 'https://pierrickbriand.github.io/entraineur-de-prompt/'

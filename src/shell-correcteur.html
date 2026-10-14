@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Correcteur – TNBIM, ESCT Nantes</title>
+<meta name="robots" content="noindex">
+<style>
+/*__CSS__*/
+.cor{max-width:1240px;margin:0 auto;padding:28px 20px 60px}
+.cor h1{font-size:28px;line-height:1.2;margin-bottom:6px}
+.cor .chapo{color:var(--discret);margin-bottom:18px;max-width:70ch}
+#depot{border:2px dashed var(--accent);background:var(--carte);padding:26px;text-align:center;cursor:pointer}
+#depot.survol{background:#DCF7E6;border-style:solid}
+#depot b{display:block;font-size:17px;color:var(--accent-fonce)}
+.actions-cor{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+#resume{margin:8px 0 12px;font-weight:600}
+.defile-cor{overflow-x:auto;border:1px solid var(--trait);background:var(--carte)}
+table.suivi{border-collapse:collapse;width:100%;font-size:14px;min-width:1100px}
+table.suivi th,table.suivi td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--trait);vertical-align:middle;white-space:nowrap}
+table.suivi th{background:#F1F5F9;position:sticky;top:0}
+table.suivi th button{background:none;border:0;font-weight:700;font-size:13px;cursor:pointer;padding:0}
+table.suivi tbody tr{cursor:pointer}
+table.suivi tbody tr:hover,table.suivi tbody tr.actif{background:#ECFDF3}
+.cbarre{display:inline-block;width:64px;height:8px;background:#E2E8F0;margin-right:8px;vertical-align:middle}
+.cbarre i{display:block;height:100%;background:var(--accent)}
+.tx.bas{color:#B42318;font-weight:700}.tx.moy{color:#B54708;font-weight:700}.tx.bon{color:var(--accent-fonce);font-weight:700}
+.pastille{display:inline-block;min-width:22px;padding:1px 7px;margin-right:4px;color:#fff;font-weight:700;font-size:12px;text-align:center}
+.pastille.rouge{background:#B42318}.pastille.orange{background:#B54708}
+#detail{margin-top:22px;padding:20px;background:var(--carte);border:1px solid var(--trait-fort)}
+.detail-tete{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.detail-grille{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:10px}
+#detail h3{margin:16px 0 6px;font-size:15px}
+#detail .journal td{white-space:normal;font-size:13px;vertical-align:top}
+table.grille-notes{width:100%;border-collapse:collapse;font-size:14px}
+table.grille-notes th,table.grille-notes td{padding:7px 8px;border-bottom:1px solid var(--trait);text-align:left;vertical-align:top}
+table.grille-notes input[type=number]{width:70px;padding:6px;border:1px solid var(--trait-fort)}
+#note-corr{width:100%;padding:10px;border:1px solid var(--trait-fort);background:#fff;margin-top:8px}
+.total-note{font-size:18px;font-weight:700;color:var(--accent-fonce);margin:10px 0}
+@media(max-width:800px){.detail-grille{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="cor">
+  <h1>Correcteur du module TNBIM</h1>
+  <p class="chapo">Glisse ici les fichiers de projet (.json) déposés par les étudiants sur Teams. Tout reste sur ton ordinateur : rien n'est envoyé, rien n'est enregistré en ligne. Les notes que tu saisis restent dans ce navigateur.</p>
+  <div id="depot" role="button" tabindex="0" data-action="choisir"><b>Glisse les fichiers .json ici</b><span>ou clique pour les choisir (plusieurs à la fois, tout un groupe ou toute une classe)</span></div>
+  <input type="file" id="fichiers" accept=".json,application/json" multiple hidden>
+  <div id="refus"></div>
+  <div id="zone-tableau" hidden>
+    <p id="resume"></p>
+    <div class="actions-cor"><button type="button" class="btn plein" data-action="csv">Exporter le tableau (.csv)</button><button type="button" class="btn" data-action="vider">Tout vider</button></div>
+    <div class="defile-cor"><table class="suivi"><thead><tr id="tete-tab"></tr></thead><tbody id="corps-tab"></tbody></table></div>
+    <p class="note" style="margin-top:8px">Journal : nombre de lignes, dont lignes modifiées ou rejetées. Références : thèmes avec un verdict, sur six. Clique sur une ligne pour voir le détail, lire le dossier et noter.</p>
+  </div>
+  <section id="detail" hidden></section>
+</main>
+<div id="impression" class="dossier" hidden></div>
+<script>
+/*__JS__*/
+</script>
+</body>
+</html>

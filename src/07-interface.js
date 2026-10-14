@@ -250,7 +250,7 @@ document.addEventListener('change', e => {
   if (t.hasAttribute('data-coche')) { S.champs[t.getAttribute('data-coche')] = t.checked ? 'oui' : 'non'; toucher(); majLeger(); return; }
   if (t.tagName === 'SELECT' && t.hasAttribute('data-champ')) {
     const c = t.getAttribute('data-champ'); S.champs[c] = t.value; toucher();
-    if (c === 'id_classe') rendre(false); else majLeger();
+    if (c === 'id_classe' || c === 'vr_cat') rendre(false); else majLeger();
   }
 });
 document.addEventListener('click', e => {

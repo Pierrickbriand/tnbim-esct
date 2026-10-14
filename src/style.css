@@ -406,3 +406,5 @@ details.aide .picto{flex:none;color:var(--accent-fonce)}
 .cadre-outil{margin-top:14px;border:1px solid var(--trait-fort);background:#fff}
 .cadre-outil iframe{display:block;width:100%;height:760px;border:0}
 @media print{.cadre-outil{display:none}}
+.sources-verif li{margin-bottom:8px}.sources-verif .note{display:block;margin-top:2px}
+.bloc.ou-verifier{border-left:3px solid var(--accent)}

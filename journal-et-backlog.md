@@ -1,7 +1,8 @@
 # Journal et backlog – application TNBIM ESCT Nantes
 
 Adresse publiée : https://pierrickbriand.github.io/tnbim-esct/ (dépôt `tnbim-esct`). L'ancienne adresse outils-ia-pedagogie/tnbim-esct/ renvoie vers celle-ci depuis le 14 octobre 2026.
-Sources dans `src/` ; assemblage : `python3 src/build.py` depuis ce dossier.
+Correcteur : https://pierrickbriand.github.io/tnbim-esct/correcteur/
+Sources dans `src/` ; assemblage des deux pages : `python3 src/build.py` depuis la racine du dépôt.
 
 ## Livraison 1 – 13 octobre 2026
 Page unique `tnbim-esct/index.html`, même structure technique que l'atelier IA et vente (sources assemblées par `build.py`, sauvegarde locale, fichier de projet .json, export PDF), sans Apps Script ni Gmail.
@@ -37,6 +38,11 @@ Tests : six écrans, quatre projets, export, sans erreur dans un navigateur de t
 - Page indépendante : dépôt `tnbim-esct`, https://pierrickbriand.github.io/tnbim-esct/ ; la copie dans `outils-ia-pedagogie/tnbim-esct/` est devenue un renvoi (page de redirection, chapitre conservé). Les deux adresses partagent le même domaine : la sauvegarde du navigateur reste lisible de l'une à l'autre.
 Aucun identifiant de champ modifié : le travail des étudiants de la session du 14 octobre est conservé.
 
+## Livraison 4 – 14 octobre 2026
+- Bloc « Où vérifier une référence » (dans « 5. Journal et références » et dans la veille juridique) : menu déroulant par famille (lois et codes, marchés, données personnelles, IA, cybersécurité, normes et BIM, droit du travail), liens vers les sources officielles avec ce qu'on y trouve, méthode en trois pas et définition des quatre verdicts. Sources listées dans `OU_VERIFIER` (01-donnees.js).
+- Page correcteur `correcteur/index.html`, assemblée avec les mêmes sources plus `08-correcteur.js` : glisser les .json de plusieurs étudiants ; tableau triable (classe, groupe, étudiant, projet, taux de remplissage, manques, journal avec lignes modifiées ou rejetées, cadrage écrit, verdicts, bilan, alertes, note sur 20, date) ; détail avec manques, alertes, cadrage, journal complet, fiche de contrôle, grille de la soutenance à noter (sept critères, total automatique, critères de groupe copiables aux coéquipiers, usage de l'IA individuel), remarques, dossier complet ; export CSV avec les notes. Notes gardées dans le navigateur du correcteur (clé `correcteur-tnbim-notes`).
+Aucun identifiant de champ modifié. Testé avec trois fichiers fictifs.
+
 ## Réglages (bloc CONFIG de src/01-donnees.js)
 - nbGroupes : 6 (aide à la saisie).
 - soutenance : 20 minutes par groupe (12 + 8).
@@ -55,7 +61,7 @@ nbGroupes, soutenance, verifieLe après relecture des sources officielles, éven
 Ne pas changer les identifiants de champs et de choix pendant qu'un groupe travaille (préfixes : ps_, pc_, pk_ avec ck, pr_ avec rc, jb, fc, cad_, bi_, ip_, id_, p_).
 
 ## Backlog
-1. Livraison 4 : page correcteur adaptée (lecture des .json par étudiant, journal, fiche de contrôle, grille de notation, export CSV).
+1. Retours de la session du 14 octobre : ajuster les consignes qui ont bloqué.
 2. Relire et vérifier les liens et thèmes juridiques sur les sources officielles, puis renseigner verifieLe.
 3. Aligner la grille avec la consigne d'oral C1 à C7 de l'école.
 4. Vérifier que l'entraîneur s'affiche bien dans le cadre sur la page publiée ; sinon garder le bouton « nouvel onglet ».

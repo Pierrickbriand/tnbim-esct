@@ -114,6 +114,7 @@ function blocContrats() {
     + etape('pk_cadre', `Décrivez le cadre contractuel`, '30 min', `<p>Le chantier fictif n'a pas de contrat réel. Décrivez en quelques lignes les documents que vous supposez : un marché privé de travaux par lot, un cahier des charges, une convention BIM. Puis dites ce que vous savez du cadre qui s'applique, et ce qu'il faudra vérifier.</p>
       <div class="champs">${champ('pk_docs', `Documents contractuels supposés`, { type: 'zone', large: true, requis: R, sansMention: true })}
       ${champ('pk_cadre', `Cadre applicable (marché privé ou public, norme, cahier des clauses) : ce que vous savez, ce qu'il faut vérifier`, { type: 'zone', large: true, requis: R, sansMention: true })}</div>` + consigne('travail_contrats', `Consigne pour lister les clauses sensibles`))
+    + blocOuVerifier()
     + etape('pk_fiches', `Fiches de veille`, '60 min', `<p>Une fiche par cas. Au moins deux fiches complètes. Une fiche « vérifié » indique la source officielle ouverte et sa date. Sinon, elle reste « à vérifier ».</p>` + fiches)
     + etape('pk_reco', `Synthèse`, '20 min', `<p>Trois points de vigilance : ce qu'un manager de projets doit faire avant de numériser le chantier, en une phrase chacun. Ils iront dans le dossier et sur la diapositive principale.</p><div class="champs">${champ('pk_synthese', `Les trois points de vigilance du manager de projets`, { type: 'zone', lignes: 4, large: true, requis: R, sansMention: true, ex: `1. Signer la convention BIM avant … 2. Informer les salariés de … 3. Faire relire par … tout document rédigé avec une IA.` })}
       ${forcesFaiblesses('pk_ff', R)}
@@ -170,7 +171,7 @@ function resultatCle() {
   const p = v('pj_choix');
   if (p === 'strategie') { const r = calcStrat(); return r.ok ? `Option en tête : ${r.noms[r.mieux]} (${nb(r.t[r.mieux], 2)} sur 10).` : ''; }
   if (p === 'chantier') { const L = lignesSuivi().filter(x => x.ok); if (!L.length) return ''; const e = L.filter(x => x.spi < 0.9 || x.cpi < 0.9).length; return `${L.length} lots suivis, ${e} en écart.`; }
-  if (p === 'contrats') { const f = [1, 2, 3, 4].filter(n => rempli('ck' + n + '_cas')); const ver = f.filter(n => v('ck' + n + '_statut') === 'verifie').length; return `${f.length} fiches de veille, ${ver} vérifiées sur source officielle.`; }
+  if (p === 'contrats') { const f = [1, 2, 3, 4].filter(n => rempli('ck' + n + '_cas')); const ver = f.filter(n => v('ck' + n + '_statut') === 'verifie').length; return `${f.length} fiche${f.length > 1 ? 's' : ''} de veille, ${ver} vérifiée${ver > 1 ? 's' : ''} sur source officielle.`; }
   if (p === 'rh') { const E = effectifsMois(), pic = E.reduce((a, b) => b.tot > a.tot ? b : a); return `Pointe de ${pic.tot} personnes au mois ${pic.m}.`; }
   return '';
 }
