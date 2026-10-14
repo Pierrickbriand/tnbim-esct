@@ -257,7 +257,7 @@ document.addEventListener('click', e => {
   const b = e.target.closest('button,[data-action]'); if (!b) return;
   const a = b.getAttribute('data-action');
   if (a === 'nouveau') return nouveau();
-  if (a === 'fiche-md') { telecharger('fiche-chantier-rive-nord.md', cahierChantierMd(), 'text/markdown;charset=utf-8'); return bref('Fiche téléchargée. Vous l\'ajouterez au projet Claude à l\'étape « Régler Claude ».'); }
+  if (a === 'fiche-md') { telecharger('fiche-chantier-rive-nord.md', cahierChantierMd(), 'text/markdown;charset=utf-8'); return bref('Fiche téléchargée dans « Téléchargements » : fiche-chantier-rive-nord.md. Vous la donnerez à Claude à l\'étape « Régler Claude ».'); }
   if (a === 'fiche-csv') { telecharger('lots-chantier-rive-nord.csv', '\ufeff' + ficheChantierCsv(), 'text/csv;charset=utf-8'); return bref('Fichier des lots téléchargé.'); }
   if (a === 'jb-plus') { S.champs.jb_n = String(Math.min(40, nJournal() + 1)); toucher(); rendre(false); return; }
   if (a === 'ouvrir') return ouvrir();

@@ -43,6 +43,9 @@ Aucun identifiant de champ modifié : le travail des étudiants de la session du
 - Page correcteur `correcteur/index.html`, assemblée avec les mêmes sources plus `08-correcteur.js` : glisser les .json de plusieurs étudiants ; tableau triable (classe, groupe, étudiant, projet, taux de remplissage, manques, journal avec lignes modifiées ou rejetées, cadrage écrit, verdicts, bilan, alertes, note sur 20, date) ; détail avec manques, alertes, cadrage, journal complet, fiche de contrôle, grille de la soutenance à noter (sept critères, total automatique, critères de groupe copiables aux coéquipiers, usage de l'IA individuel), remarques, dossier complet ; export CSV avec les notes. Notes gardées dans le navigateur du correcteur (clé `correcteur-tnbim-notes`).
 Aucun identifiant de champ modifié. Testé avec trois fichiers fictifs.
 
+## Livraison 4 bis – 14 octobre 2026, retour de la session
+- Retour des étudiants : fichier .md incompris. Étape 1 : nouveau paragraphe « Deux fichiers à télécharger » (ce qu'est un .md, pourquoi, sa destination dans le projet Claude ; le .csv pour les projets qui calculent ; où arrive le fichier), aide « Je ne retrouve pas le fichier ». Étape 2 : création du projet détaillée en cinq pas (zone des fichiers, « + » ou « Ajouter », vérification), bouton de retéléchargement sur place. Glossaire : .md et .csv.
+
 ## Réglages (bloc CONFIG de src/01-donnees.js)
 - nbGroupes : 6 (aide à la saisie).
 - soutenance : 20 minutes par groupe (12 + 8).
