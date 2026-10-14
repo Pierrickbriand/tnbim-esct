@@ -1102,6 +1102,26 @@ const SCHEMAS = {
       + G.p(1, 456, 186) + G.p(2, 596, 192) + G.p(3, 468, 224) + G.p(4, 456, 80),
     legende: [`Dans le projet, repérez la zone des fichiers : « Fichiers », « Connaissances » ou « Contenu du projet » selon la version.`, `Cliquez sur « + », puis choisissez « fiche-chantier-rive-nord.md » dans « Téléchargements ». Ou glissez le fichier dans la zone.`, `Le nom du fichier apparaît : c'est fait, Claude le lira à chaque conversation.`, `Ensuite seulement, collez les instructions dans la zone « Instructions ».`]
   },
+  instructions: {
+    titre: `Coller les instructions dans votre projet Claude`,
+    svg: () => G.defs + G.r(0, 0, 640, 340, '#fff') + `<line x1="270" y1="0" x2="270" y2="340" stroke="#CBD5E1"/>`
+      + G.t(16, 26, 'Cette page, étape 2', { b: true, c: '#0F172A', s: 13 })
+      + G.r(16, 44, 238, 200, '#F8FAFC', '#CBD5E1') + G.r(16, 44, 238, 32, '#F1F5F9') + G.t(26, 65, 'Instructions du projet', { b: true, c: '#0F172A', s: 11 })
+      + G.h(184, 49, 64, 22) + G.t(216, 64, 'Copier', { c: '#065F46', b: true, a: 'middle', s: 11 })
+      + G.l(28, 92, 200) + G.l(28, 108, 170) + G.l(28, 124, 210) + G.l(28, 148, 120) + G.l(28, 164, 190) + G.l(28, 180, 160) + G.l(28, 196, 200) + G.l(28, 212, 140)
+      + G.t(16, 272, 'Le cadre gris change avec vos cases', { s: 10 }) + G.t(16, 288, 'et vos champs. Copiez-le quand il vous convient.', { s: 10 })
+      + G.fl(256, 60, 300, 60)
+      + G.t(286, 26, 'Claude, page de votre projet', { b: true, c: '#0F172A', s: 13 })
+      + G.r(286, 44, 338, 32, '#F1F5F9') + G.t(296, 65, 'TNBIM groupe 3', { b: true, c: '#0F172A', s: 11 })
+      + G.r(286, 90, 150, 56, '#fff', '#CBD5E1') + G.t(296, 122, 'Écrivez votre message…', { c: '#94A3B8', s: 9 })
+      + G.t(286, 170, 'Pas ici : la conversation', { s: 9, c: '#B45309' }) + G.t(286, 184, 'sert aux consignes (étape 3).', { s: 9, c: '#B45309' })
+      + G.h(450, 90, 174, 160) + G.t(462, 112, 'Instructions', { b: true, c: '#065F46' }) + G.t(590, 112, '✎', { c: '#065F46', s: 13 })
+      + G.r(462, 122, 150, 96, '#fff', '#A7F3D0') + G.l(470, 132, 120) + G.l(470, 146, 100) + G.l(470, 160, 130) + G.l(470, 174, 90) + G.l(470, 188, 120) + G.l(470, 202, 110)
+      + G.r(540, 222, 72, 22, '#047857') + G.t(576, 237, 'Enregistrer', { c: '#fff', b: true, a: 'middle', s: 10 })
+      + G.h(450, 262, 174, 60) + G.t(462, 284, 'Fichiers', { b: true, c: '#065F46' }) + G.r(462, 294, 100, 20, '#fff', '#A7F3D0') + G.t(468, 308, 'fiche-chantier…md', { s: 9, c: '#0F172A' })
+      + G.p(1, 184, 49) + G.p(2, 450, 90) + G.p(3, 462, 122) + G.p(4, 540, 222),
+    legende: [`Cliquez sur « Copier » : tout le cadre gris est copié.`, `Dans votre projet Claude, ouvrez la zone « Instructions » (selon la version : un crayon, ou « Définir les instructions du projet »). Pas la zone de conversation.`, `Collez le texte (Ctrl + V, ou ⌘ V sur Mac).`, `Enregistrez. Claude relira ces instructions à chaque conversation de ce projet. La fiche du chantier, elle, est dans « Fichiers ».`]
+  },
   consigne: {
     titre: `Copier une consigne de la page, la coller dans Claude`,
     svg: () => G.defs + G.r(0, 0, 640, 340, '#fff') + `<line x1="300" y1="0" x2="300" y2="340" stroke="#CBD5E1"/>`
@@ -1507,7 +1527,7 @@ const CHAPITRES = [
       ${champ('ip_travail', `Qui nous sommes et notre façon de travailler`, { type: 'zone', lignes: 5, large: true, defaut: DEF_TRAVAIL, sansMention: true, aide: `Remplacez les accolades. Vous pouvez tout réécrire.` })}
       ${champ('ip_jamais', `Ce que Claude ne doit jamais faire`, { type: 'zone', lignes: 4, large: true, defaut: DEF_JAMAIS, sansMention: true, aide: `Remplacez les accolades. Ajoutez ce qui vous a déjà agacé chez une IA.` })}</div>`
       + `<h3>Le texte à copier dans Claude</h3><p class="note">Il se met à jour avec vos cases et vos champs. Les passages entre accolades { } que vous n'avez pas remplacés restent tels quels : Claude les comprendra comme des blancs, mieux vaut les remplir.</p>`
-      + consigne('instructions', `Instructions du projet, à coller dans la zone « Instructions »`) + schema('consigne') + `<p>Elles mentionnent votre projet : le groupe n'a pas encore choisi à ce stade. Claude l'apprendra dans la première conversation, ou vous revenez copier la version à jour après l'étape 3.</p>`)
+      + consigne('instructions', `Instructions du projet, à coller dans la zone « Instructions »`) + schema('instructions') + `<p>Elles mentionnent votre projet : le groupe n'a pas encore choisi à ce stade. Claude l'apprendra dans la première conversation, ou vous revenez copier la version à jour après l'étape 3.</p>`)
     + etape('c_test', `Vérifiez que Claude a compris (facultatif)`, '5 min', `<p>Envoyez cette consigne dans une conversation du projet. Comparez chaque réponse à ce que vous attendiez :</p>` + tirets([
         `rôle : assistant de votre groupe, pour un module sur la transition numérique du BTP`,
         `chantier : ${nb(CHANTIER.surface)} m², ${eur(CHANTIER.budget)} HT, ${CHANTIER.duree} mois`,

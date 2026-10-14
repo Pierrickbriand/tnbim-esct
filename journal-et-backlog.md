@@ -59,6 +59,8 @@ Aucun identifiant de champ modifié. Testé avec trois fichiers fictifs.
 - « 2. Régler Claude », pas « Collez les instructions » : explication du mécanisme (chaque case = une phrase du cadre gris, le menu et les champs se recopient dans le texte), titre du groupe de cases, titre « Le texte à copier dans Claude » au-dessus du cadre gris ; le cadre gris se surligne brièvement à chaque changement de case, de menu ou de champ.
 - Repère « Confidentialité : ce qui n'entre jamais dans Claude », en tête de « 2. Régler Claude » : chantier fictif seulement, aucune connexion d'outil ou de base de données au projet, compte personnel, règle de l'entreprise prioritaire (secret de la défense nationale, habilitation, accord de confidentialité, secret des affaires), ce que disent les textes (RGPD, règlement IA, secret des affaires, secret de la défense nationale) avec sources à ouvrir ; réglage « Confidentialité » de Claude. Sources ajoutées : Légifrance (Code de commerce L151-1 et s., Code pénal 413-9 et s.), marquées « à vérifier ».
 - Règle 1 du départ : « ni connexion à un outil de l'entreprise ».
+- Schéma « Coller les instructions dans votre projet Claude » sous le cadre gris de l'étape 2 (zone « Instructions » du projet, pas la conversation) ; le schéma « copier une consigne, la coller dans Claude » reste à l'étape 3.
+- Rappel de la veille de l'oral : le fichier .ics de l'étape 6 est retenu comme seule solution (pas d'adresses d'étudiants).
 
 ## Réglages (bloc CONFIG de src/01-donnees.js)
 - nbGroupes : 6 (aide à la saisie).
