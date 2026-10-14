@@ -6,7 +6,7 @@ const CLE = 'tnbim-esct-v1';
    Dates au format AAAA-MM-JJ. Tous les textes de l'application s'en déduisent.
    nbGroupes : nombre de groupes par classe (simple aide à la saisie).
    soutenance : minutes par groupe, exposé puis questions.
-   Les dates des sessions ne sont pas dans ce bloc : chaque étudiant les saisit à la page « Départ ». Le dépôt se fait la veille de la dernière session, sans date affichée.
+   Les dates des sessions ne sont pas dans ce bloc : chaque étudiant les saisit à la page « Départ ». L'envoi des fichiers se fait par e-mail au formateur, la veille de la dernière session, sans date affichée.
    verifieLe : laisse vide tant que tu n'as pas relu les références juridiques sur les sources officielles.
    Les repères juridiques ne se mettent pas à jour tout seuls : relis-les, puis écris la date. */
 const CONFIG = {
@@ -15,7 +15,8 @@ const CONFIG = {
   rncp: '38810',
   verifieLe: '',
   nbGroupes: 6,
-  remise: 'Teams',
+  remise: 'e-mail',
+  formateurMail: 'pierrick.briand@gmail.com',
   soutenance: { total: 20, expose: 12, questions: 8 }
 };
 const MOIS_CFG = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
@@ -25,7 +26,7 @@ const dJM = iso => { const d = dCfg(iso); return jourCfg(d.j) + ' ' + MOIS_CFG[d
 const dLong = iso => { const d = dCfg(iso); return jourCfg(d.j) + ' ' + MOIS_CFG[d.m] + ' ' + d.a; };
 const decaler = (iso, jours) => { const d = dCfg(iso); return new Date(Date.UTC(d.a, d.m, d.j + jours)); };
 const dJMdepuis = (iso, jours) => { const d = decaler(iso, jours); return jourCfg(d.getUTCDate()) + ' ' + MOIS_CFG[d.getUTCMonth()]; };
-/* Les dates sont saisies par les étudiants à la page « Départ ». Le dépôt se fait la veille de la dernière session. */
+/* Les dates sont saisies par les étudiants à la page « Départ ». L'envoi se fait la veille de la dernière session. */
 const DATE_OK = x => /^\d{4}-\d{2}-\d{2}$/.test(String(x || ''));
 const DATE_VIDE = '(date à saisir à la page « Départ »)';
 const dateChamp = cle => { const x = S.champs && S.champs[cle]; return DATE_OK(x) ? x : ''; };
@@ -34,7 +35,7 @@ const S1 = () => dateChamp('id_seance1') ? dJM(dateChamp('id_seance1')) : DATE_V
 const S2 = () => dateChamp('id_seance2') ? dJM(dateChamp('id_seance2')) : DATE_VIDE;
 const S1L = () => dateChamp('id_seance1') ? dLong(dateChamp('id_seance1')) : DATE_VIDE;
 const S2L = () => dateChamp('id_seance2') ? dLong(dateChamp('id_seance2')) : DATE_VIDE;
-/* Le dépôt se fait la veille de la dernière session : la page n'affiche pas de date, pour rester juste pour les trois classes */
+/* L'envoi se fait la veille de la dernière session : la page n'affiche pas de date, pour rester juste pour les trois classes */
 const DEPOT = () => 'la veille de la dernière session';
 const DEPOTL = DEPOT;
 const nomClasse = () => rempli('id_classe') ? String(v('id_classe')).trim() : '…';
@@ -208,7 +209,7 @@ const DECISIONS = {
     options: [
       { id: 'continu', l: `Une ligne par usage significatif, remplie au fil de l'eau par un responsable désigné`, e: { tracabilite: 25, charge: 5 },
         suite: `Le journal reste fidèle. Il vous servira de base pour le bilan et pour les questions du jury.` },
-      { id: 'chacun', l: `Chacun note ses propres usages, puis nous fusionnons avant le dépôt`, e: { tracabilite: 10, charge: 10 },
+      { id: 'chacun', l: `Chacun note ses propres usages, puis nous fusionnons avant l'envoi`, e: { tracabilite: 10, charge: 10 },
         suite: `C'est faisable si vous fixez une date de fusion. Sinon, il manquera des lignes.` },
       { id: 'fin', l: `Nous le reconstituons à la fin, de mémoire`, e: { tracabilite: -15, fiabilite: -5 }, grave: true,
         suite: `Un journal reconstitué oublie les rejets, qui sont ce qu'il y a de plus utile. Sans journal, l'usage de l'IA est plafonné à 1,5 point sur 3.` }
@@ -229,7 +230,7 @@ const DECISIONS = {
 
 const SCENES = {
   s_veille: {
-    titre: `Le jour du dépôt, 17 h : la veille de la dernière session`,
+    titre: `Le jour de l'envoi, 17 h : la veille de la dernière session`,
     dependDe: ['sources', 'journal'],
     variantes: [
       { id: 'inventee', si: c => c.choix.sources === 'copier',
@@ -244,20 +245,20 @@ const SCENES = {
         reps: [
           { id: 'a', l: `Vous reconstituez les usages à partir de l'historique de vos conversations, et vous écrivez que le journal est reconstitué`, e: { tracabilite: 15, charge: 10 }, suite: `Vous restez honnêtes. Vous retrouverez des rejets que la mémoire avait effacés.` },
           { id: 'b', l: `Vous inventez des lignes plausibles`, e: { tracabilite: -20, risque: 10 }, suite: `Un journal inventé est pire qu'un journal court. Reprenez avec l'historique réel.` },
-          { id: 'c', l: `Vous déposez deux lignes`, e: { tracabilite: -10 }, suite: `Le plafond de 1,5 point sur 3 risque de s'appliquer. Ajoutez au moins les usages principaux.` }
+          { id: 'c', l: `Vous envoyez deux lignes`, e: { tracabilite: -10 }, suite: `Le plafond de 1,5 point sur 3 risque de s'appliquer. Ajoutez au moins les usages principaux.` }
         ] },
       { id: 'tendu', si: c => c.j.charge >= 65,
         texte: `Le groupe a encore la moitié du projet à finir. Le support compte dix-neuf diapositives.`,
         reps: [
           { id: 'a', l: `Vous gardez le livrable minimal et dix diapositives au plus, quitte à retirer un chapitre`, e: { charge: -20, fiabilite: 5 }, suite: `Vous présenterez peu, mais complet. C'est ce que demande la consigne.` },
           { id: 'b', l: `Vous demandez à Claude de tout condenser en une heure`, e: { charge: 5, fiabilite: -10, tracabilite: -5 }, suite: `Vous aurez un dossier que personne n'a relu. Notez cet usage dans le journal.` },
-          { id: 'c', l: `Vous déposez le dossier tel quel`, e: { charge: 5, fiabilite: -10 }, suite: `Le jury verra les trous. Mieux vaut un périmètre réduit qu'un dossier troué.` }
+          { id: 'c', l: `Vous envoyez le dossier tel quel`, e: { charge: 5, fiabilite: -10 }, suite: `Le jury verra les trous. Mieux vaut un périmètre réduit qu'un dossier troué.` }
         ] },
       { id: 'pret', si: () => true,
-        texte: `Le dossier est prêt une heure avant le dépôt. Le groupe hésite à relire encore.`,
+        texte: `Le dossier est prêt une heure avant l'envoi. Le groupe hésite à relire encore.`,
         reps: [
           { id: 'a', l: `Vous faites relire le journal et la fiche de contrôle par une personne qui n'a pas écrit le dossier`, e: { fiabilite: 10, tracabilite: 5 }, suite: `Un regard neuf repère ce que vous ne voyez plus. C'est la meilleure heure du projet.` },
-          { id: 'b', l: `Vous déposez tout de suite`, e: {}, suite: `Vous tenez le délai. Vérifiez au moins que les deux fichiers sont bien partis sur Teams.` },
+          { id: 'b', l: `Vous envoyez tout de suite`, e: {}, suite: `Vous tenez le délai. Vérifiez au moins que les deux pièces jointes sont bien dans l'e-mail avant d'envoyer.` },
           { id: 'c', l: `Vous demandez à Claude de relire tout le dossier`, e: { tracabilite: 5, fiabilite: -5 }, suite: `Il corrigera du style, pas les faits. Notez l'usage dans le journal et gardez la vérification humaine.` }
         ] }
     ]
@@ -272,7 +273,7 @@ const QUESTIONS_JURY = {
 };
 
 const ROLES = [
-  ['r_coord', 'Coordination du groupe', `Tient le calendrier, anime les points d'étape, dépose les fichiers sur Teams.`],
+  ['r_coord', 'Coordination du groupe', `Tient le calendrier, anime les points d'étape, envoie le support du groupe au formateur.`],
   ['r_ia', 'Journal de bord IA', `Tient le journal ligne par ligne, relit les consignes clés, prépare le bilan.`],
   ['r_jur', 'Références juridiques', `Tient la fiche de contrôle : ouvre chaque source officielle, note le verdict et la date.`],
   ['r_proj', 'Contenu du projet', `Garde la cohérence du livrable, refait les calculs à la main.`],

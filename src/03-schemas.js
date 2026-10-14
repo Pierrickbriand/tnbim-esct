@@ -20,7 +20,7 @@ const SCHEMAS = {
   parcours: {
     titre: `Le parcours de la page, en six étapes`,
     svg: () => {
-      const et = [['Départ', 'le groupe, les dates'], ['1. Chantier', 'lire, télécharger'], ['2. Claude', 'projet, instructions'], ['3. Projet', 'choisir, lancer'], ['4. Travail', 'calculer, vérifier'], ['5. Journal', 'tracer, références'], ['6. Dépôt', 'PDF, Teams, oral']];
+      const et = [['Départ', 'le groupe, les dates'], ['1. Chantier', 'lire, télécharger'], ['2. Claude', 'projet, instructions'], ['3. Projet', 'choisir, lancer'], ['4. Travail', 'calculer, vérifier'], ['5. Journal', 'tracer, références'], ['6. Envoi', 'PDF, e-mail, oral']];
       let s = G.defs + G.r(0, 0, 640, 340, '#fff');
       s += G.r(14, 40, 300, 200, '#ECFDF5', '#A7F3D0') + G.t(24, 60, 'Première session de cours', { b: true, c: '#065F46' });
       s += G.r(324, 40, 190, 200, '#F8FAFC', '#CBD5E1') + G.t(334, 60, 'Entre les deux sessions', { b: true, c: '#334155' });
@@ -118,23 +118,25 @@ const SCHEMAS = {
       + G.r(16, 186, 300, 120, '#fff', '#CBD5E1') + G.t(28, 206, 'Solution A', { b: true, s: 11, c: '#065F46' }) + G.t(28, 226, 'Cliquez sur « Ouvrir », puis choisissez', { s: 10 }) + G.t(28, 242, 'votre fichier .json dans Téléchargements.', { s: 10 })
       + G.r(330, 186, 294, 120, '#fff', '#CBD5E1') + G.t(342, 206, 'Solution B', { b: true, s: 11, c: '#065F46' }) + G.t(342, 226, 'Glissez le fichier .json n’importe où', { s: 10 }) + G.t(342, 242, 'sur la page.', { s: 10 })
       + G.h(342, 256, 270, 40) + G.t(477, 280, 'Déposez le fichier de projet', { a: 'middle', s: 10, c: '#065F46', b: true })
-      + G.t(16, 328, 'Rangez aussi le fichier dans le dossier Teams du groupe, ou envoyez-le à votre adresse.', { s: 10, c: '#64748B' })
+      + G.t(16, 328, 'Envoyez aussi le fichier à votre propre adresse : une copie en lieu sûr.', { s: 10, c: '#64748B' })
       + G.p(1, 24, 56) + G.p(2, 348, 68) + G.p(3, 16, 186) + G.p(4, 330, 186),
     legende: [`« Enregistrer » (ou Ctrl + S) crée le fichier de projet.`, `Il arrive dans « Téléchargements », avec votre groupe et votre nom.`, `Pour reprendre ailleurs : « Ouvrir » et choisir le fichier.`, `Ou glisser le fichier sur la page. Le travail affiché est remplacé par celui du fichier, après confirmation.`]
   },
-  depot: {
-    titre: `Déposer sur Teams, la veille de l'oral`,
-    svg: () => G.r(0, 0, 640, 340, '#fff') + G.r(0, 0, 180, 340, '#F1F5F9') + `<line x1="180" y1="0" x2="180" y2="340" stroke="#CBD5E1"/>`
-      + G.t(18, 28, 'Teams', { b: true, s: 14, c: '#0F172A' }) + G.t(18, 60, 'Équipes', { s: 11 }) + G.h(8, 72, 164, 26) + G.t(18, 90, 'ESCT – TNBIM', { b: true, s: 11, c: '#065F46' })
-      + G.t(30, 116, 'Général', { s: 11 }) + G.t(30, 138, 'Fichiers', { s: 11 })
-      + G.t(204, 34, 'Fichiers', { b: true, s: 16, c: '#0F172A' }) + G.t(204, 56, 'Devoirs › Groupe 3', { s: 11, c: '#64748B' })
-      + G.h(494, 14, 132, 30) + G.t(560, 34, '↑ Charger', { c: '#065F46', b: true, a: 'middle' })
-      + `<line x1="180" y1="70" x2="640" y2="70" stroke="#E2E8F0"/>`
-      + [['TNBIM_G3_prenom-nom_journal-dossier.pdf', 'vous'], ['TNBIM_G3_prenom-nom_2026-11-02.json', 'vous'], ['Support_G3.pptx', 'le groupe, une fois']].map((f, i) => { const y = 90 + i * 44; return G.h(204, y, 420, 34) + G.t(216, y + 22, f[0], { s: 11, c: '#0F172A', b: true }) + G.t(612, y + 22, f[1], { s: 10, c: '#64748B', a: 'end' }); }).join('')
-      + G.t(204, 250, 'Chaque étudiant dépose son PDF et son fichier .json.', { s: 11 }) + G.t(204, 268, 'Le support de présentation est déposé une seule fois, par le groupe.', { s: 11 })
-      + G.t(204, 300, 'Vérifiez que les fichiers apparaissent avant de fermer.', { s: 11, b: true, c: '#065F46' })
-      + G.p(1, 8, 72) + G.p(2, 494, 14) + G.p(3, 204, 90),
-    legende: [`Ouvrez l'équipe du module, puis l'onglet « Fichiers » et le dossier de votre groupe.`, `Cliquez sur « Charger » et choisissez vos fichiers dans « Téléchargements ».`, `Trois fichiers par groupe au minimum : votre PDF, votre .json, et le support commun. Le dossier Teams exact vous est donné par votre formateur.`]
+  envoi: {
+    titre: `L'e-mail au formateur, avec les pièces jointes`,
+    svg: () => G.r(0, 0, 640, 340, '#fff') + G.r(0, 0, 640, 40, '#F1F5F9') + G.t(16, 26, 'Nouveau message', { b: true, s: 13, c: '#0F172A' })
+      + G.t(16, 68, 'À', { s: 11, c: '#64748B' }) + G.r(60, 52, 564, 26, '#fff', '#CBD5E1') + G.t(70, 70, 'pierrick.briand@gmail.com', { s: 11, c: '#0F172A' })
+      + G.t(16, 104, 'Objet', { s: 11, c: '#64748B' }) + G.r(60, 88, 564, 26, '#fff', '#CBD5E1') + G.t(70, 106, 'TNBIM – groupe 3 – Prénom NOM – MP2-gpC3', { s: 11, c: '#0F172A' })
+      + G.r(16, 124, 608, 110, '#fff', '#CBD5E1') + G.t(28, 144, 'Bonjour,', { s: 11 }) + G.t(28, 162, 'Voici mon travail pour le module « La transition numérique, le BIM et les enjeux juridiques ».', { s: 10 })
+      + G.t(28, 180, 'Classe : MP2-gpC3 – Groupe : 3 – Projet : Comparateur de scénarios', { s: 10 }) + G.t(28, 198, 'Pièces jointes : mon PDF, mon fichier de projet .json', { s: 10 }) + G.t(28, 216, 'Cordialement, Prénom NOM', { s: 10 })
+      + G.t(16, 258, 'Pièces jointes', { s: 11, c: '#64748B' })
+      + G.h(16, 266, 290, 28) + G.t(28, 285, 'TNBIM_G3_prenom-nom_journal-dossier.pdf', { s: 10, c: '#065F46', b: true })
+      + G.h(318, 266, 306, 28) + G.t(330, 285, 'TNBIM_G3_prenom-nom_2026-11-02.json', { s: 10, c: '#065F46', b: true })
+      + G.r(16, 302, 190, 28, '#fff', '#E2E8F0') + G.t(28, 321, 'Support_G3.pdf (si chargé du support)', { s: 9, c: '#64748B' })
+      + G.r(520, 302, 104, 30, '#047857') + G.t(572, 322, 'Envoyer', { c: '#fff', b: true, a: 'middle' })
+      + G.h(440, 302, 36, 30) + G.t(458, 324, '📎', { a: 'middle', s: 16 })
+      + G.p(1, 60, 52) + G.p(2, 440, 302) + G.p(3, 16, 266) + G.p(4, 520, 302),
+    legende: [`Adresse, objet et texte sont déjà remplis par la page. Vous pouvez les modifier.`, `Cliquez sur le trombone et choisissez vos fichiers dans « Téléchargements ».`, `Vérifiez que le PDF et le fichier .json sont bien listés. Le support du groupe, seulement si vous en êtes chargé.`, `Envoyez, puis gardez l'e-mail dans « Messages envoyés ».`]
   }
 };
 function schema(id) {

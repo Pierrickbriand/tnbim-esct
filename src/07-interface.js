@@ -129,7 +129,7 @@ const nomJson = () => 'TNBIM_' + cheminNom() + '_' + (S.exportLe || new Date().t
 function enregistrer() {
   S.exportLe = new Date().toISOString(); S.modifsExport = S.modifs;
   telecharger(nomJson(), JSON.stringify(S, null, 1), 'application/json');
-  sauver(); $('rappel').hidden = true; majBarre(); bref('Fichier enregistré dans les téléchargements. Rangez-le aussi dans le dossier Teams du groupe.');
+  sauver(); $('rappel').hidden = true; majBarre(); bref('Fichier enregistré dans les téléchargements. Envoyez-le aussi à votre propre adresse, par sécurité.');
 }
 function preparerImpression() {
   const C = calcul(); $('impression').innerHTML = dossierHtml(C); typoNoeuds($('impression'));
@@ -139,6 +139,45 @@ function preparerImpression() {
   const nom = ('Groupe ' + (rempli('id_groupe') ? String(v('id_groupe')).trim() : '…') + (rempli('id_nom') ? ' \u2013 ' + String(v('id_nom')).trim() : '')).replace(/[\\"\n\r]/g, ' ');
   const police = 'font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;font-size:8.5pt;color:#64748B;';
   st.textContent = '@page{@bottom-left{content:"' + nom + ' \u2013 mini-dossier IA et vente";' + police + '}@bottom-right{content:counter(page) " / " counter(pages);' + police + '}}';
+}
+const nomPdf = () => 'TNBIM_' + cheminNom() + '_journal-dossier.pdf';
+/* Envoi au formateur : message prérempli. Une page web ne peut pas joindre de fichier : l'étudiant les ajoute lui-même. */
+function messageEnvoi() {
+  const nom = String(v('id_nom')).trim(), P = projetChoisi();
+  const objet = typo('TNBIM – groupe ' + (rempli('id_groupe') ? String(v('id_groupe')).trim() : '…') + ' – ' + nom + ' – ' + nomClasse());
+  const corps = typo(['Bonjour,', '',
+    'Voici mon travail pour le module « ' + CONFIG.module + ' ».', '',
+    'Classe : ' + nomClasse(), 'Groupe : ' + (rempli('id_groupe') ? String(v('id_groupe')).trim() : '…'), 'Nom : ' + nom,
+    'Projet : ' + (P ? P.t : 'non choisi'), rempli('id_membres') ? 'Membres du groupe : ' + String(v('id_membres')).trim().split(/\n+/).join(', ') : '', '',
+    'Pièces jointes :', '– ' + nomPdf() + ' (mon journal de bord et mon dossier)', '– ' + nomJson() + ' (mon fichier de projet)', '– le support de présentation du groupe, si j\'en suis chargé', '',
+    'Cordialement,', nom].filter((l, i, t) => !(l === '' && t[i - 1] === '')).join('\n'));
+  return { objet, corps };
+}
+async function envoyer(mode) {
+  if (!rempli('id_nom') || !rempli('id_groupe')) { bref('Renseignez d\'abord votre nom et votre groupe, à la page « Départ ».'); location.hash = '#depart'; return; }
+  const m = messageEnvoi(), a = CONFIG.formateurMail;
+  if (mode === 'copie') return copier('À : ' + a + '\nObjet : ' + m.objet + '\n\n' + m.corps, 'Message copié. Collez-le dans un nouvel e-mail, puis ajoutez les pièces jointes.');
+  const ok = await demander('Votre e-mail est prêt', 'Votre fichier de projet va être enregistré dans « Téléchargements ». Votre messagerie s\'ouvre ensuite, avec l\'adresse, l\'objet et le texte remplis. Ajoutez vous-même les pièces jointes : ' + nomPdf() + ' et ' + nomJson() + '. Une page web ne peut pas les joindre à votre place.', 'Ouvrir ma messagerie', 'Annuler');
+  if (!ok) return;
+  enregistrer();
+  const o = encodeURIComponent(m.objet), c = encodeURIComponent(m.corps.replace(/\n/g, '\r\n'));
+  if (mode === 'gmail') return void window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(a) + '&su=' + o + '&body=' + c, '_blank', 'noopener');
+  if (mode === 'outlook') return void window.open('https://outlook.office.com/mail/deeplink/compose?to=' + encodeURIComponent(a) + '&subject=' + o + '&body=' + c, '_blank', 'noopener');
+  if (mode === 'outlook-perso') return void window.open('https://outlook.live.com/mail/0/deeplink/compose?to=' + encodeURIComponent(a) + '&subject=' + o + '&body=' + c, '_blank', 'noopener');
+  location.href = 'mailto:' + a + '?subject=' + o + '&body=' + c;
+}
+/* Rappel dans l'agenda de l'étudiant : événement d'une journée, la veille de la dernière session */
+function rappelIcs() {
+  const s2 = dateChamp('id_seance2'); if (!s2) return bref('Saisissez d\'abord la date de la dernière session, à la page « Départ ».');
+  const d = decaler(s2, -1), fin = decaler(s2, 0);
+  const j = x => x.toISOString().slice(0, 10).replace(/-/g, '');
+  const horo = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+  const desc = 'Envoyer par e-mail à ' + CONFIG.formateurMail + ' : mon PDF (journal et dossier) et mon fichier de projet .json, depuis l\'application (étape 6). Support du groupe si j\'en suis chargé. Oral demain.';
+  const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//TNBIM ESCT//FR', 'BEGIN:VEVENT', 'UID:tnbim-envoi-' + j(d) + '-' + cheminNom() + '@pierrickbriand.github.io', 'DTSTAMP:' + horo,
+    'DTSTART;VALUE=DATE:' + j(d), 'DTEND;VALUE=DATE:' + j(fin), 'SUMMARY:TNBIM : envoyer mon dossier au formateur (veille de l\'oral)', 'DESCRIPTION:' + desc.replace(/,/g, '\\,'),
+    'BEGIN:VALARM', 'TRIGGER:PT9H', 'ACTION:DISPLAY', 'DESCRIPTION:Envoyer mon dossier TNBIM', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+  telecharger('rappel-envoi-tnbim.ics', ics, 'text/calendar;charset=utf-8');
+  bref('Rappel téléchargé : ouvrez le fichier .ics, votre agenda l\'ajoute.');
 }
 async function exporter() {
   const C = calcul(), M = manques(C), n = M.liste.length;
@@ -221,7 +260,7 @@ function verifierRappel() {
   const finDeSeance = (m >= 735 && m <= 755);
   const montrer = Date.now() > rappelRepousse && ((depuis > 0 && (depuis >= 60 || finDeSeance)) || (finDeSeance && (S.modifs || 0) > 0));
   const fin = montrer && finDeSeance;
-  $('rappel-texte').textContent = typo(fin ? `Fin de séance : enregistrez le fichier, puis rangez-le dans le dossier Teams du groupe. Sans lui, vous ne retrouvez pas votre travail à la prochaine session.` : 'Enregistrez le fichier de projet avant de fermer. Le navigateur peut tout perdre.');
+  $('rappel-texte').textContent = typo(fin ? `Fin de séance : enregistrez le fichier, puis envoyez-le à votre propre adresse. Sans lui, vous ne retrouvez pas votre travail à la prochaine session.` : 'Enregistrez le fichier de projet avant de fermer. Le navigateur peut tout perdre.');
   $('rappel-fait').hidden = !fin;
   $('rappel').hidden = !montrer;
 }
@@ -264,6 +303,12 @@ document.addEventListener('click', e => {
   if (b.hasAttribute('data-aller-ch')) return allerAncre(b.getAttribute('data-aller-ch'), b.getAttribute('data-aller-ancre'));
   if (a === 'enregistrer') return enregistrer();
   if (a === 'exporter') return exporter();
+  if (a === 'envoyer') return envoyer('mail');
+  if (a === 'envoyer-gmail') return envoyer('gmail');
+  if (a === 'envoyer-outlook') return envoyer('outlook');
+  if (a === 'envoyer-outlook-perso') return envoyer('outlook-perso');
+  if (a === 'envoyer-copie') return envoyer('copie');
+  if (a === 'rappel-ics') return rappelIcs();
   if (a === 'recuperer') return recuperer();
   if (a === 'volet-nav') return basculer('nav');
   if (a === 'volet-etat') return basculer('etat');

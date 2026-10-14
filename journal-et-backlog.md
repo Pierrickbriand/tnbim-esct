@@ -49,6 +49,12 @@ Aucun identifiant de champ modifié. Testé avec trois fichiers fictifs.
 ## Livraison 4 ter – 14 octobre 2026
 - Huit schémas simplifiés (SVG, dans `03-schemas.js`), chacun dans une aide repliable « Voir le schéma » : le parcours en six étapes et les trois temps (Départ) ; enregistrer et reprendre le fichier de projet (Départ, aide « Comment marche cette page ») ; où arrive le fichier téléchargé (étape 1) ; créer le projet Claude et donner la fiche à Claude (étape 2) ; copier une consigne et la coller dans Claude (étapes 2 et 3) ; de la conversation à la ligne du journal (étape 5) ; déposer sur Teams (étape 6). Les schémas ne montrent pas de capture réelle : disposition indicative, légende numérotée.
 
+## Livraison 5 – 14 octobre 2026, remise par e-mail
+- Le dépôt sur Teams est retiré partout (l'ESCT ne permet pas le dépôt de devoir). Remise par e-mail au formateur (CONFIG.formateurMail = pierrick.briand@gmail.com, CONFIG.remise = 'e-mail'), la veille de la dernière session.
+- Étape « 6. Envoi et oral », pas « Envoyez vos fichiers au formateur » : explication, quatre pas, boutons « Ouvrir Gmail », « Ouvrir Outlook (compte école) », « Ouvrir Outlook.com (compte personnel) », « Autre messagerie » (mailto) et « Copier le message ». L'adresse, l'objet (TNBIM – groupe – nom – classe) et le corps (classe, groupe, nom, projet, membres, liste des pièces jointes) sont remplis ; le fichier de projet est enregistré juste avant l'ouverture. Les pièces jointes restent à ajouter par l'étudiant : une page web ne peut pas les joindre. Liste des noms de fichiers attendus, schéma de l'e-mail.
+- Rappel d'agenda : bouton « Ajouter le rappel à mon agenda (.ics) », événement d'une journée la veille de la dernière session (date saisie au départ), avec alarme à 9 h, description complète. Désactivé tant que la date n'est pas saisie.
+- Textes, rôles, scène, plan d'action, PDF et correcteur mis à jour : « envoi » à la place de « dépôt ».
+
 ## Réglages (bloc CONFIG de src/01-donnees.js)
 - nbGroupes : 6 (aide à la saisie).
 - soutenance : 20 minutes par groupe (12 + 8).
@@ -56,7 +62,7 @@ Aucun identifiant de champ modifié. Testé avec trois fichiers fictifs.
 - Dates connues : gpC3 les 14 octobre et 4 novembre 2026 ; gpC1 les 20 janvier et 3 février 2027 ; gpC2 les 17 et 30 juin 2027. Les étudiants les saisissent.
 
 ## Hypothèses prises, à confirmer
-- Chaque étudiant tient sa page, son projet Claude, son journal et dépose son propre PDF et son fichier ; le support est commun au groupe.
+- Chaque étudiant tient sa page, son projet Claude, son journal et envoie son propre PDF et son fichier ; le support est commun au groupe, envoyé par la personne chargée du support.
 - « On se consacre à cette dernière » a été lu comme « à l'IA ».
 - Grille de la soutenance proposée par Claude, à aligner avec la consigne d'oral existante (critères C1 à C7).
 

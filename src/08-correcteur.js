@@ -6,6 +6,7 @@ const slug = x => String(x).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^
 const nomGroupe = () => (rempli('id_groupe') ? 'G' + String(v('id_groupe')).trim().replace(/^g/i, '') : 'groupe');
 const cheminNom = () => nomGroupe() + (rempli('id_nom') ? '_' + slug(v('id_nom')) : '');
 const nomJson = () => 'TNBIM_' + cheminNom() + '_' + (S.exportLe || new Date().toISOString()).slice(0, 10) + '.json';
+const nomPdf = () => 'TNBIM_' + cheminNom() + '_journal-dossier.pdf';
 const CLE_NOTES = 'correcteur-tnbim-notes';
 let ETUDIANTS = [], TRI = { k: 'groupe', sens: 1 }, OUVERT = null, IGNORES = 0, REFUSES = [];
 

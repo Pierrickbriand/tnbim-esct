@@ -24,16 +24,16 @@ function diagnostic(C) {
     [0, d.cadrageIA, `Réécrire le cadrage initial à la main et le dater.`],
     [0, d.sansVerif, `Ouvrir chaque référence sur sa source officielle et noter le verdict.`],
     [0, lignes < 3, `Remplir le journal : au moins trois usages significatifs, dont un rejeté ou modifié.`],
-    [0, true, `Enregistrer le fichier de projet et le ranger dans le dossier Teams du groupe.`],
+    [0, true, `Enregistrer le fichier de projet et l'envoyer à votre propre adresse, en sécurité.`],
     [1, verdicts < 3, `Terminer la fiche de contrôle : un verdict pour chaque thème traité.`],
     [1, j.charge >= 60, `Réduire le périmètre au livrable minimal et le terminer.`],
     [1, true, `Refaire à la main un calcul de chaque tableau ou indicateur du projet.`],
     [1, true, `Préparer le support : dix diapositives au plus, avec sources et dates.`],
     [2, true, `Relire le journal et la fiche de contrôle avec une personne extérieure au groupe.`],
     [2, true, `Préparer l'oral : qui présente quoi, et la réponse à la question du jury.`],
-    [2, true, `Déposer les fichiers sur Teams au plus tard ${DEPOT()}.`]
+    [2, true, `Envoyer les fichiers au formateur par e-mail, au plus tard ${DEPOT()}.`]
   ];
-  const temps = [`Cette semaine`, `Avant le dépôt`, `Avant l'oral`].map((t, i) => ({ t, a: pool.filter(x => x[0] === i && x[1]).slice(0, 3).map(x => x[2].replace(/\.$/, '')) }));
+  const temps = [`Cette semaine`, `Avant l'envoi`, `Avant l'oral`].map((t, i) => ({ t, a: pool.filter(x => x[0] === i && x[1]).slice(0, 3).map(x => x[2].replace(/\.$/, '')) }));
   return { titre, phrases: ph, alertes: alertes(C).filter(a => a[0] !== 'info').map(a => a[1]), temps };
 }
 
@@ -92,7 +92,7 @@ function dossierHtml(C) {
   return `<div class="couv"><p>Module « ${CONFIG.module} » – ${CONFIG.formation}</p>
       <h1>Journal de bord IA et dossier – groupe ${rempli('id_groupe') ? esc(String(v('id_groupe')).trim()) : '…'}</h1>
       <p><b>${t('id_nom')}</b> – classe ${esc(nomClasse())} – chantier fictif ${CHANTIER.nom}</p><p>Projet : ${P ? P.t : '<span class="vide">à choisir</span>'}</p>
-      <p>Dossier exporté le ${dateFr(new Date())}. Dépôt sur Teams avec le support, au plus tard ${DEPOTL()}.</p></div>
+      <p>Dossier exporté le ${dateFr(new Date())}. Envoi par e-mail au formateur, avec le support, au plus tard ${DEPOTL()}.</p></div>
     <h2>1. Le groupe</h2><p><b>Page tenue par.</b> ${t('id_nom')}</p><p><b>Membres.</b> ${t('id_membres')}</p><table><tr><th>Rôle</th><th>Responsable</th></tr>${roles}</table>
     <h2>2. Le projet</h2>${P ? `<p><b>${P.t}.</b> ${P.but}</p><p><b>Livrable minimal.</b> ${P.livrable}</p><p><b>Angle principal.</b> ${P.missions.join(', ')}.</p>` : ''}${rempli('ch_manque') ? qr('Ce qui manque à la fiche du chantier : nos hypothèses', 'ch_manque') : ''}${qr('Plan retenu par le groupe', 'p_plan')}${rempli('p_consigne') ? qr('Consigne de démarrage, améliorée dans l\'entraîneur de prompt', 'p_consigne') : ''}
     <h2>3. Le travail du projet</h2>${travailDossier()}

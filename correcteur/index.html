@@ -453,7 +453,7 @@ table.grille-notes input[type=number]{width:70px;padding:6px;border:1px solid va
 <body>
 <main class="cor">
   <h1>Correcteur du module TNBIM</h1>
-  <p class="chapo">Glisse ici les fichiers de projet (.json) déposés par les étudiants sur Teams. Tout reste sur ton ordinateur : rien n'est envoyé, rien n'est enregistré en ligne. Les notes que tu saisis restent dans ce navigateur.</p>
+  <p class="chapo">Glisse ici les fichiers de projet (.json) envoyés par les étudiants par e-mail. Tout reste sur ton ordinateur : rien n'est envoyé, rien n'est enregistré en ligne. Les notes que tu saisis restent dans ce navigateur.</p>
   <div id="depot" role="button" tabindex="0" data-action="choisir"><b>Glisse les fichiers .json ici</b><span>ou clique pour les choisir (plusieurs à la fois, tout un groupe ou toute une classe)</span></div>
   <input type="file" id="fichiers" accept=".json,application/json" multiple hidden>
   <div id="refus"></div>
@@ -477,7 +477,7 @@ const CLE = 'tnbim-esct-v1';
    Dates au format AAAA-MM-JJ. Tous les textes de l'application s'en déduisent.
    nbGroupes : nombre de groupes par classe (simple aide à la saisie).
    soutenance : minutes par groupe, exposé puis questions.
-   Les dates des sessions ne sont pas dans ce bloc : chaque étudiant les saisit à la page « Départ ». Le dépôt se fait la veille de la dernière session, sans date affichée.
+   Les dates des sessions ne sont pas dans ce bloc : chaque étudiant les saisit à la page « Départ ». L'envoi des fichiers se fait par e-mail au formateur, la veille de la dernière session, sans date affichée.
    verifieLe : laisse vide tant que tu n'as pas relu les références juridiques sur les sources officielles.
    Les repères juridiques ne se mettent pas à jour tout seuls : relis-les, puis écris la date. */
 const CONFIG = {
@@ -486,7 +486,8 @@ const CONFIG = {
   rncp: '38810',
   verifieLe: '',
   nbGroupes: 6,
-  remise: 'Teams',
+  remise: 'e-mail',
+  formateurMail: 'pierrick.briand@gmail.com',
   soutenance: { total: 20, expose: 12, questions: 8 }
 };
 const MOIS_CFG = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
@@ -496,7 +497,7 @@ const dJM = iso => { const d = dCfg(iso); return jourCfg(d.j) + ' ' + MOIS_CFG[d
 const dLong = iso => { const d = dCfg(iso); return jourCfg(d.j) + ' ' + MOIS_CFG[d.m] + ' ' + d.a; };
 const decaler = (iso, jours) => { const d = dCfg(iso); return new Date(Date.UTC(d.a, d.m, d.j + jours)); };
 const dJMdepuis = (iso, jours) => { const d = decaler(iso, jours); return jourCfg(d.getUTCDate()) + ' ' + MOIS_CFG[d.getUTCMonth()]; };
-/* Les dates sont saisies par les étudiants à la page « Départ ». Le dépôt se fait la veille de la dernière session. */
+/* Les dates sont saisies par les étudiants à la page « Départ ». L'envoi se fait la veille de la dernière session. */
 const DATE_OK = x => /^\d{4}-\d{2}-\d{2}$/.test(String(x || ''));
 const DATE_VIDE = '(date à saisir à la page « Départ »)';
 const dateChamp = cle => { const x = S.champs && S.champs[cle]; return DATE_OK(x) ? x : ''; };
@@ -505,7 +506,7 @@ const S1 = () => dateChamp('id_seance1') ? dJM(dateChamp('id_seance1')) : DATE_V
 const S2 = () => dateChamp('id_seance2') ? dJM(dateChamp('id_seance2')) : DATE_VIDE;
 const S1L = () => dateChamp('id_seance1') ? dLong(dateChamp('id_seance1')) : DATE_VIDE;
 const S2L = () => dateChamp('id_seance2') ? dLong(dateChamp('id_seance2')) : DATE_VIDE;
-/* Le dépôt se fait la veille de la dernière session : la page n'affiche pas de date, pour rester juste pour les trois classes */
+/* L'envoi se fait la veille de la dernière session : la page n'affiche pas de date, pour rester juste pour les trois classes */
 const DEPOT = () => 'la veille de la dernière session';
 const DEPOTL = DEPOT;
 const nomClasse = () => rempli('id_classe') ? String(v('id_classe')).trim() : '…';
@@ -679,7 +680,7 @@ const DECISIONS = {
     options: [
       { id: 'continu', l: `Une ligne par usage significatif, remplie au fil de l'eau par un responsable désigné`, e: { tracabilite: 25, charge: 5 },
         suite: `Le journal reste fidèle. Il vous servira de base pour le bilan et pour les questions du jury.` },
-      { id: 'chacun', l: `Chacun note ses propres usages, puis nous fusionnons avant le dépôt`, e: { tracabilite: 10, charge: 10 },
+      { id: 'chacun', l: `Chacun note ses propres usages, puis nous fusionnons avant l'envoi`, e: { tracabilite: 10, charge: 10 },
         suite: `C'est faisable si vous fixez une date de fusion. Sinon, il manquera des lignes.` },
       { id: 'fin', l: `Nous le reconstituons à la fin, de mémoire`, e: { tracabilite: -15, fiabilite: -5 }, grave: true,
         suite: `Un journal reconstitué oublie les rejets, qui sont ce qu'il y a de plus utile. Sans journal, l'usage de l'IA est plafonné à 1,5 point sur 3.` }
@@ -700,7 +701,7 @@ const DECISIONS = {
 
 const SCENES = {
   s_veille: {
-    titre: `Le jour du dépôt, 17 h : la veille de la dernière session`,
+    titre: `Le jour de l'envoi, 17 h : la veille de la dernière session`,
     dependDe: ['sources', 'journal'],
     variantes: [
       { id: 'inventee', si: c => c.choix.sources === 'copier',
@@ -715,20 +716,20 @@ const SCENES = {
         reps: [
           { id: 'a', l: `Vous reconstituez les usages à partir de l'historique de vos conversations, et vous écrivez que le journal est reconstitué`, e: { tracabilite: 15, charge: 10 }, suite: `Vous restez honnêtes. Vous retrouverez des rejets que la mémoire avait effacés.` },
           { id: 'b', l: `Vous inventez des lignes plausibles`, e: { tracabilite: -20, risque: 10 }, suite: `Un journal inventé est pire qu'un journal court. Reprenez avec l'historique réel.` },
-          { id: 'c', l: `Vous déposez deux lignes`, e: { tracabilite: -10 }, suite: `Le plafond de 1,5 point sur 3 risque de s'appliquer. Ajoutez au moins les usages principaux.` }
+          { id: 'c', l: `Vous envoyez deux lignes`, e: { tracabilite: -10 }, suite: `Le plafond de 1,5 point sur 3 risque de s'appliquer. Ajoutez au moins les usages principaux.` }
         ] },
       { id: 'tendu', si: c => c.j.charge >= 65,
         texte: `Le groupe a encore la moitié du projet à finir. Le support compte dix-neuf diapositives.`,
         reps: [
           { id: 'a', l: `Vous gardez le livrable minimal et dix diapositives au plus, quitte à retirer un chapitre`, e: { charge: -20, fiabilite: 5 }, suite: `Vous présenterez peu, mais complet. C'est ce que demande la consigne.` },
           { id: 'b', l: `Vous demandez à Claude de tout condenser en une heure`, e: { charge: 5, fiabilite: -10, tracabilite: -5 }, suite: `Vous aurez un dossier que personne n'a relu. Notez cet usage dans le journal.` },
-          { id: 'c', l: `Vous déposez le dossier tel quel`, e: { charge: 5, fiabilite: -10 }, suite: `Le jury verra les trous. Mieux vaut un périmètre réduit qu'un dossier troué.` }
+          { id: 'c', l: `Vous envoyez le dossier tel quel`, e: { charge: 5, fiabilite: -10 }, suite: `Le jury verra les trous. Mieux vaut un périmètre réduit qu'un dossier troué.` }
         ] },
       { id: 'pret', si: () => true,
-        texte: `Le dossier est prêt une heure avant le dépôt. Le groupe hésite à relire encore.`,
+        texte: `Le dossier est prêt une heure avant l'envoi. Le groupe hésite à relire encore.`,
         reps: [
           { id: 'a', l: `Vous faites relire le journal et la fiche de contrôle par une personne qui n'a pas écrit le dossier`, e: { fiabilite: 10, tracabilite: 5 }, suite: `Un regard neuf repère ce que vous ne voyez plus. C'est la meilleure heure du projet.` },
-          { id: 'b', l: `Vous déposez tout de suite`, e: {}, suite: `Vous tenez le délai. Vérifiez au moins que les deux fichiers sont bien partis sur Teams.` },
+          { id: 'b', l: `Vous envoyez tout de suite`, e: {}, suite: `Vous tenez le délai. Vérifiez au moins que les deux pièces jointes sont bien dans l'e-mail avant d'envoyer.` },
           { id: 'c', l: `Vous demandez à Claude de relire tout le dossier`, e: { tracabilite: 5, fiabilite: -5 }, suite: `Il corrigera du style, pas les faits. Notez l'usage dans le journal et gardez la vérification humaine.` }
         ] }
     ]
@@ -743,7 +744,7 @@ const QUESTIONS_JURY = {
 };
 
 const ROLES = [
-  ['r_coord', 'Coordination du groupe', `Tient le calendrier, anime les points d'étape, dépose les fichiers sur Teams.`],
+  ['r_coord', 'Coordination du groupe', `Tient le calendrier, anime les points d'étape, envoie le support du groupe au formateur.`],
   ['r_ia', 'Journal de bord IA', `Tient le journal ligne par ligne, relit les consignes clés, prépare le bilan.`],
   ['r_jur', 'Références juridiques', `Tient la fiche de contrôle : ouvre chaque source officielle, note le verdict et la date.`],
   ['r_proj', 'Contenu du projet', `Garde la cohérence du livrable, refait les calculs à la main.`],
@@ -1038,7 +1039,7 @@ const SCHEMAS = {
   parcours: {
     titre: `Le parcours de la page, en six étapes`,
     svg: () => {
-      const et = [['Départ', 'le groupe, les dates'], ['1. Chantier', 'lire, télécharger'], ['2. Claude', 'projet, instructions'], ['3. Projet', 'choisir, lancer'], ['4. Travail', 'calculer, vérifier'], ['5. Journal', 'tracer, références'], ['6. Dépôt', 'PDF, Teams, oral']];
+      const et = [['Départ', 'le groupe, les dates'], ['1. Chantier', 'lire, télécharger'], ['2. Claude', 'projet, instructions'], ['3. Projet', 'choisir, lancer'], ['4. Travail', 'calculer, vérifier'], ['5. Journal', 'tracer, références'], ['6. Envoi', 'PDF, e-mail, oral']];
       let s = G.defs + G.r(0, 0, 640, 340, '#fff');
       s += G.r(14, 40, 300, 200, '#ECFDF5', '#A7F3D0') + G.t(24, 60, 'Première session de cours', { b: true, c: '#065F46' });
       s += G.r(324, 40, 190, 200, '#F8FAFC', '#CBD5E1') + G.t(334, 60, 'Entre les deux sessions', { b: true, c: '#334155' });
@@ -1136,23 +1137,25 @@ const SCHEMAS = {
       + G.r(16, 186, 300, 120, '#fff', '#CBD5E1') + G.t(28, 206, 'Solution A', { b: true, s: 11, c: '#065F46' }) + G.t(28, 226, 'Cliquez sur « Ouvrir », puis choisissez', { s: 10 }) + G.t(28, 242, 'votre fichier .json dans Téléchargements.', { s: 10 })
       + G.r(330, 186, 294, 120, '#fff', '#CBD5E1') + G.t(342, 206, 'Solution B', { b: true, s: 11, c: '#065F46' }) + G.t(342, 226, 'Glissez le fichier .json n’importe où', { s: 10 }) + G.t(342, 242, 'sur la page.', { s: 10 })
       + G.h(342, 256, 270, 40) + G.t(477, 280, 'Déposez le fichier de projet', { a: 'middle', s: 10, c: '#065F46', b: true })
-      + G.t(16, 328, 'Rangez aussi le fichier dans le dossier Teams du groupe, ou envoyez-le à votre adresse.', { s: 10, c: '#64748B' })
+      + G.t(16, 328, 'Envoyez aussi le fichier à votre propre adresse : une copie en lieu sûr.', { s: 10, c: '#64748B' })
       + G.p(1, 24, 56) + G.p(2, 348, 68) + G.p(3, 16, 186) + G.p(4, 330, 186),
     legende: [`« Enregistrer » (ou Ctrl + S) crée le fichier de projet.`, `Il arrive dans « Téléchargements », avec votre groupe et votre nom.`, `Pour reprendre ailleurs : « Ouvrir » et choisir le fichier.`, `Ou glisser le fichier sur la page. Le travail affiché est remplacé par celui du fichier, après confirmation.`]
   },
-  depot: {
-    titre: `Déposer sur Teams, la veille de l'oral`,
-    svg: () => G.r(0, 0, 640, 340, '#fff') + G.r(0, 0, 180, 340, '#F1F5F9') + `<line x1="180" y1="0" x2="180" y2="340" stroke="#CBD5E1"/>`
-      + G.t(18, 28, 'Teams', { b: true, s: 14, c: '#0F172A' }) + G.t(18, 60, 'Équipes', { s: 11 }) + G.h(8, 72, 164, 26) + G.t(18, 90, 'ESCT – TNBIM', { b: true, s: 11, c: '#065F46' })
-      + G.t(30, 116, 'Général', { s: 11 }) + G.t(30, 138, 'Fichiers', { s: 11 })
-      + G.t(204, 34, 'Fichiers', { b: true, s: 16, c: '#0F172A' }) + G.t(204, 56, 'Devoirs › Groupe 3', { s: 11, c: '#64748B' })
-      + G.h(494, 14, 132, 30) + G.t(560, 34, '↑ Charger', { c: '#065F46', b: true, a: 'middle' })
-      + `<line x1="180" y1="70" x2="640" y2="70" stroke="#E2E8F0"/>`
-      + [['TNBIM_G3_prenom-nom_journal-dossier.pdf', 'vous'], ['TNBIM_G3_prenom-nom_2026-11-02.json', 'vous'], ['Support_G3.pptx', 'le groupe, une fois']].map((f, i) => { const y = 90 + i * 44; return G.h(204, y, 420, 34) + G.t(216, y + 22, f[0], { s: 11, c: '#0F172A', b: true }) + G.t(612, y + 22, f[1], { s: 10, c: '#64748B', a: 'end' }); }).join('')
-      + G.t(204, 250, 'Chaque étudiant dépose son PDF et son fichier .json.', { s: 11 }) + G.t(204, 268, 'Le support de présentation est déposé une seule fois, par le groupe.', { s: 11 })
-      + G.t(204, 300, 'Vérifiez que les fichiers apparaissent avant de fermer.', { s: 11, b: true, c: '#065F46' })
-      + G.p(1, 8, 72) + G.p(2, 494, 14) + G.p(3, 204, 90),
-    legende: [`Ouvrez l'équipe du module, puis l'onglet « Fichiers » et le dossier de votre groupe.`, `Cliquez sur « Charger » et choisissez vos fichiers dans « Téléchargements ».`, `Trois fichiers par groupe au minimum : votre PDF, votre .json, et le support commun. Le dossier Teams exact vous est donné par votre formateur.`]
+  envoi: {
+    titre: `L'e-mail au formateur, avec les pièces jointes`,
+    svg: () => G.r(0, 0, 640, 340, '#fff') + G.r(0, 0, 640, 40, '#F1F5F9') + G.t(16, 26, 'Nouveau message', { b: true, s: 13, c: '#0F172A' })
+      + G.t(16, 68, 'À', { s: 11, c: '#64748B' }) + G.r(60, 52, 564, 26, '#fff', '#CBD5E1') + G.t(70, 70, 'pierrick.briand@gmail.com', { s: 11, c: '#0F172A' })
+      + G.t(16, 104, 'Objet', { s: 11, c: '#64748B' }) + G.r(60, 88, 564, 26, '#fff', '#CBD5E1') + G.t(70, 106, 'TNBIM – groupe 3 – Prénom NOM – MP2-gpC3', { s: 11, c: '#0F172A' })
+      + G.r(16, 124, 608, 110, '#fff', '#CBD5E1') + G.t(28, 144, 'Bonjour,', { s: 11 }) + G.t(28, 162, 'Voici mon travail pour le module « La transition numérique, le BIM et les enjeux juridiques ».', { s: 10 })
+      + G.t(28, 180, 'Classe : MP2-gpC3 – Groupe : 3 – Projet : Comparateur de scénarios', { s: 10 }) + G.t(28, 198, 'Pièces jointes : mon PDF, mon fichier de projet .json', { s: 10 }) + G.t(28, 216, 'Cordialement, Prénom NOM', { s: 10 })
+      + G.t(16, 258, 'Pièces jointes', { s: 11, c: '#64748B' })
+      + G.h(16, 266, 290, 28) + G.t(28, 285, 'TNBIM_G3_prenom-nom_journal-dossier.pdf', { s: 10, c: '#065F46', b: true })
+      + G.h(318, 266, 306, 28) + G.t(330, 285, 'TNBIM_G3_prenom-nom_2026-11-02.json', { s: 10, c: '#065F46', b: true })
+      + G.r(16, 302, 190, 28, '#fff', '#E2E8F0') + G.t(28, 321, 'Support_G3.pdf (si chargé du support)', { s: 9, c: '#64748B' })
+      + G.r(520, 302, 104, 30, '#047857') + G.t(572, 322, 'Envoyer', { c: '#fff', b: true, a: 'middle' })
+      + G.h(440, 302, 36, 30) + G.t(458, 324, '📎', { a: 'middle', s: 16 })
+      + G.p(1, 60, 52) + G.p(2, 440, 302) + G.p(3, 16, 266) + G.p(4, 520, 302),
+    legende: [`Adresse, objet et texte sont déjà remplis par la page. Vous pouvez les modifier.`, `Cliquez sur le trombone et choisissez vos fichiers dans « Téléchargements ».`, `Vérifiez que le PDF et le fichier .json sont bien listés. Le support du groupe, seulement si vous en êtes chargé.`, `Envoyez, puis gardez l'e-mail dans « Messages envoyés ».`]
   }
 };
 function schema(id) {
@@ -1393,13 +1396,13 @@ const CHAPITRES = [
       + `<p><b>Dans ce module, nous nous consacrons à l'IA</b> : vous l'utilisez vous-mêmes avec Claude, et vous étudiez ce qu'elle change dans la stratégie, le cadre juridique et l'organisation d'un projet de construction.</p>`)
     + bloc(`Les deux sessions`, `<ul class="parcours">
       <li><b>Première session de cours</b>Vous réglez Claude, vous découvrez le chantier fictif, vous choisissez votre projet. Vous écrivez le cadrage initial sans IA, puis vous ouvrez le journal.</li>
-      <li class="entre"><b>Entre les deux sessions</b>Vous avancez le projet, vous vérifiez les références juridiques sur les sources officielles, vous tenez le journal. Dépôt sur Teams au plus tard ${DEPOTL()}.</li>
+      <li class="entre"><b>Entre les deux sessions</b>Vous avancez le projet, vous vérifiez les références juridiques sur les sources officielles, vous tenez le journal. Envoi des fichiers au formateur, par e-mail, au plus tard ${DEPOTL()}.</li>
       <li><b>Dernière session de cours</b>Soutenance orale de votre projet, ${CONFIG.soutenance.total} minutes par groupe, avec le support de dix diapositives au plus.</li></ul>`)
     + etape('depart_identite', `Dites qui vous êtes`, '', `<p>Ces informations servent aux consignes, au journal et au dossier. Elles restent sur l'appareil : la page n'envoie rien sur Internet. Les dates vous sont données par votre formateur.</p>
       <div class="champs">${champ('id_classe', `Classe`, { ex: 'MP2-gpC3', requis: true, sansMention: true })}
       ${champ('id_groupe', `Numéro du groupe`, { ex: '3', requis: true, sansMention: true, aide: `Entre 1 et ${CONFIG.nbGroupes}, ou le numéro donné par votre formateur.` })}
       ${champ('id_seance1', `Date de la première session`, { type: 'date', requis: true, sansMention: true })}
-      ${champ('id_seance2', `Date de la dernière session (oral)`, { type: 'date', requis: true, sansMention: true, aide: `Le dépôt sur Teams se fait la veille de cette session.` })}
+      ${champ('id_seance2', `Date de la dernière session (oral)`, { type: 'date', requis: true, sansMention: true, aide: `L'envoi des fichiers se fait la veille de cette session.` })}
       ${champ('id_nom', `Vous, qui tenez cette page`, { ex: 'Prénom NOM', requis: true, sansMention: true, large: true, aide: `Votre nom figure sur votre PDF et sur votre fichier de projet.` })}
       ${champ('id_membres', `Tous les membres du groupe`, { type: 'zone', large: true, ex: `Prénom NOM, un par ligne`, requis: true, sansMention: true })}</div>
       <h3>Qui fait quoi dans le groupe</h3><p>Chacun garde un rôle principal. Le travail reste collectif. Écrivez le prénom et le nom.</p>${blocRoles()}`)
@@ -1415,10 +1418,10 @@ const CHAPITRES = [
       <p><b>À quoi il sert.</b> Le navigateur peut tout perdre : cache vidé, autre ordinateur, session de l'école fermée. Avec ce fichier, vous reprenez là où vous vous étiez arrêté.</p>
       <p><b>Ce que vous en faites.</b></p>` + pas([
         `Cliquez sur « Enregistrer » à chaque pause et en fin de session. Le fichier arrive dans les téléchargements.`,
-        `Rangez-le dans le dossier du groupe sur Teams, ou envoyez-le à votre propre adresse.`,
+        `Envoyez-le à votre propre adresse, ou copiez-le sur une clé : une copie en lieu sûr.`,
         `Pour reprendre : cliquez sur « Ouvrir », ou glissez le fichier n'importe où sur la page.`])
       + schema('enregistrer')
-      + `<p><b>À la fin.</b> Vous déposez sur Teams votre fichier de projet, votre PDF (journal et dossier) et le support commun du groupe, au plus tard ${DEPOTL()}. Ne collez jamais ce fichier dans Claude.</p>`
+      + `<p><b>À la fin.</b> Vous envoyez par e-mail au formateur votre fichier de projet et votre PDF (journal et dossier), au plus tard ${DEPOTL()} ; la personne chargée du support envoie aussi le support du groupe. L'étape 6 prépare l'e-mail. Ne collez jamais ce fichier dans Claude.</p>`
       + tableau(['Action', 'Bouton', 'Raccourci'], [
         ['Repartir de zéro', '« Nouveau »', 'Alt + N'], ['Reprendre un fichier de projet', '« Ouvrir », ou glisser le fichier sur la page', 'Alt + O'],
         ['Enregistrer le fichier de projet', '« Enregistrer »', 'Ctrl + S, ou ⌘ S sur Mac'], ['Exporter le dossier en PDF', '« Exporter »', 'Ctrl + E, ou ⌘ E sur Mac']]))
@@ -1532,20 +1535,20 @@ const CHAPITRES = [
 },
 
 /* ── 4. Le travail du projet ── */
-{ id: 'travail', nav: '4. Travail du projet', groupe: 1, seance: () => `Entre les deux sessions, jusqu'au dépôt`,
+{ id: 'travail', nav: '4. Travail du projet', groupe: 1, seance: () => `Entre les deux sessions, jusqu'à l'envoi`,
   titre: `Le travail de votre projet`,
   chapo: `La page calcule, vous vérifiez. Chaque résultat se refait à la main au moins une fois, et chaque projet dit ses forces, ses faiblesses et ce qu'il apporte aux autres missions.`,
   rendu: () => projetTravail()
 },
 
 /* ── 5. Le journal ── */
-{ id: 'journal', nav: '5. Journal et références', groupe: 1, seance: () => `De la première session au dépôt`,
+{ id: 'journal', nav: '5. Journal et références', groupe: 1, seance: () => `De la première session à l'envoi`,
   titre: `Le journal de bord IA`,
   chapo: `Le journal est votre preuve : il montre ce que Claude vous a apporté, ce que vous avez rejeté, et comment vous avez vérifié. Il se remplit au fil de l'eau, en deux minutes par ligne.`,
   rendu: C => bloc(`À quoi sert le journal, et comment le remplir`, `<p><b>À quoi il sert.</b> Le jury ne peut pas voir vos conversations avec Claude. Le journal est la seule trace de votre usage de l'IA. C'est lui qui est noté sur ce critère : sans journal, l'usage de l'IA est plafonné à 1,5 point sur 3. Il montre surtout votre jugement : ce que vous avez rejeté ou corrigé compte plus que ce que vous avez gardé.</p>
       <p><b>Quand ajouter une ligne.</b> Chaque fois que Claude a changé votre travail : une consigne qui a donné un résultat que vous avez utilisé, un résultat que vous avez corrigé, une réponse que vous avez rejetée. Pas besoin de noter « bonjour » ni les reformulations. Une bonne session de travail donne deux à quatre lignes.</p>
       <p><b>Comment.</b> Tout de suite après l'échange, pas le soir. Dans l'ordre : la date, l'outil (« Claude, projet du groupe »), ce que vous vouliez, la phrase de votre consigne qui a fait la différence, ce que Claude a donné, votre décision (gardé, modifié ou rejeté) et pourquoi, puis comment vous avez vérifié : quel document ouvert, à quelle date. Aucune donnée confidentielle ou personnelle.</p>
-      <p><b>Trois moments obligatoires.</b> Le cadrage initial, écrit sans IA avant tout. Le journal, au fil de l'eau. Le bilan, avant le dépôt.</p>` + schema('journal'))
+      <p><b>Trois moments obligatoires.</b> Le cadrage initial, écrit sans IA avant tout. Le journal, au fil de l'eau. Le bilan, avant l'envoi.</p>` + schema('journal'))
     + decision('cadrage')
     + etape('j_cadrage', `Cadrage initial, écrit sans IA`, '20 min', `<p>Écrivez à la main, avant d'ouvrir Claude pour le projet. Quelques lignes suffisent. C'est votre point de départ : le jury le comparera à ce que vous présenterez, pour mesurer ce que le travail et l'IA ont changé.</p>
       <div class="champs">${champ('cad_date', `Date d'écriture`, { ex: '14 octobre', requis: true, sansMention: true })}
@@ -1566,15 +1569,15 @@ const CHAPITRES = [
     + blocOuVerifier()
     + etape('j_refs', `Fiche de contrôle des références`, '30 min', `<p>Demandez d'abord à Claude des pistes, puis ouvrez chaque source. Le verdict compte plus que la piste : une référence « introuvable » bien notée vaut mieux qu'une référence copiée sans l'avoir lue.</p>
       <div class="champs">${champ('vr_theme', `Thème en cours`, { type: 'liste', options: THEMES_JURIDIQUES.map(t => [t, t]), sansMention: true })}</div>` + consigne('verif_refs', `Consigne pour obtenir des pistes`) + blocFicheControle())
-    + etape('j_bilan', `Bilan, à remplir avant le dépôt`, '15 min', `<p>Trois questions, trois réponses honnêtes de quelques lignes. Elles ferment le journal et nourrissent la diapositive « Les limites ».</p><div class="champs">${champ('bi_perdu', `Ce que nous aurions perdu en travaillant sans IA`, { type: 'zone', large: true, requis: true, sansMention: true })}
+    + etape('j_bilan', `Bilan, à remplir avant l'envoi`, '15 min', `<p>Trois questions, trois réponses honnêtes de quelques lignes. Elles ferment le journal et nourrissent la diapositive « Les limites ».</p><div class="champs">${champ('bi_perdu', `Ce que nous aurions perdu en travaillant sans IA`, { type: 'zone', large: true, requis: true, sansMention: true })}
       ${champ('bi_gagne', `Ce que nous aurions gagné`, { type: 'zone', large: true, requis: true, sansMention: true })}
       ${champ('bi_pasconfie', `Ce que nous avons volontairement pas confié à l'outil`, { type: 'zone', large: true, requis: true, sansMention: true })}</div>`)
 },
 
-/* ── 6. Dépôt ── */
-{ id: 'depot', nav: '6. Dépôt et oral', groupe: 2, seance: () => `Dépôt la veille de la dernière session – oral`,
-  titre: `Déposez, puis présentez`,
-  chapo: `L'état de votre projet, une scène née de vos choix, un diagnostic et l'export. Le dépôt se fait sur Teams, la veille de la dernière session.`,
+/* ── 6. Envoi ── */
+{ id: 'depot', nav: '6. Envoi et oral', groupe: 2, seance: () => `Envoi la veille de la dernière session – oral`,
+  titre: `Envoyez, puis présentez`,
+  chapo: `L'état de votre projet, une scène née de vos choix, un diagnostic et l'export. Les fichiers partent par e-mail au formateur, la veille de la dernière session.`,
   rendu: C => scene('s_veille', C)
     + (() => { const D = diagnostic(C); return bloc(D.titre, D.phrases.map(p => `<p>${p}</p>`).join('') + `<h3>Plan d'action</h3>` + D.temps.map(x => `<p class="tt"><b>${x.t}</b></p>${x.a.length ? tirets(x.a) : '<p class="note">Rien de particulier.</p>'}`).join('')
         + `<h3>La question du jury</h3><p>« ${QUESTIONS_JURY[C.faible]} »</p>` + `<div class="champs">${champ('jury_reponse', `Notre réponse`, { type: 'zone', large: true, sansMention: true })}</div>`); })()
@@ -1584,11 +1587,20 @@ const CHAPITRES = [
     + etape('dp_pdf', `Exportez le dossier et le journal en PDF`, '', `<p>Le PDF réunit votre identité, le cadrage, le travail du projet, votre journal, la fiche de contrôle des références, le bilan et l'état du projet.</p>
       <div class="actions"><button type="button" class="btn plein" data-action="exporter">Exporter en PDF</button><button type="button" class="btn" data-action="enregistrer">Enregistrer le fichier de projet</button></div>
       <p class="note">Nom du PDF : TNBIM_${esc(cheminNom())}_journal-dossier.pdf. Nom du fichier de projet : ${esc(nomJson())}.</p>`)
-    + etape('dp_teams', `Déposez sur Teams`, '', `<p>Au plus tard ${DEPOTL()}, chaque étudiant dépose dans le dossier Teams de son groupe :</p>` + tirets([`son PDF (journal et dossier)`, `son fichier de projet .json`, `le support de présentation commun au groupe (une seule fois, par la personne chargée du support)`])
-      + schema('depot') + `<p class="note">Vérifiez que les fichiers apparaissent bien dans Teams avant de fermer.</p>`)
+    + etape('dp_envoi', `Envoyez vos fichiers au formateur`, '', `<p>Au plus tard ${DEPOTL()}, chaque étudiant envoie un e-mail à <b>${CONFIG.formateurMail}</b> avec deux pièces jointes : son PDF (journal et dossier) et son fichier de projet .json. La personne chargée du support joint aussi le support de présentation du groupe, une seule fois.</p>
+      <p>La page prépare l'e-mail : l'adresse, l'objet et le texte sont remplis. <b>Les pièces jointes, c'est vous</b> : une page web ne peut pas les ajouter à votre place. Elles sont dans « Téléchargements ».</p>` + pas([
+        `Exportez le PDF (étape précédente) et enregistrez le fichier de projet : les deux arrivent dans « Téléchargements ».`,
+        `Cliquez sur votre messagerie ci-dessous. Le fichier de projet est enregistré une dernière fois, puis l'e-mail s'ouvre, déjà rempli.`,
+        `Ajoutez les pièces jointes avec le trombone : le PDF, le fichier .json, et le support si vous en êtes chargé.`,
+        `Vérifiez la liste des pièces jointes, puis envoyez. Gardez l'e-mail envoyé : c'est votre preuve.`])
+      + `<div class="actions"><button type="button" class="btn plein" data-action="envoyer-gmail">Ouvrir Gmail</button><button type="button" class="btn" data-action="envoyer-outlook">Ouvrir Outlook (compte école)</button><button type="button" class="btn" data-action="envoyer-outlook-perso">Ouvrir Outlook.com (compte personnel)</button><button type="button" class="btn" data-action="envoyer">Autre messagerie</button><button type="button" class="btn" data-action="envoyer-copie">Copier le message</button></div>
+      <h3>Vos pièces jointes</h3>` + tirets([`<b>${esc(nomPdf())}</b> : votre PDF, journal et dossier`, `<b>${esc(nomJson())}</b> : votre fichier de projet`, `le support de présentation du groupe, dix diapositives au plus (seulement la personne chargée du support)`])
+      + schema('envoi')
+      + `<h3>Un rappel dans votre agenda</h3><p>Pour ne pas oublier : ajoutez un rappel à votre agenda, le matin ${dateChamp('id_seance2') ? 'du ' + dJMdepuis(dateChamp('id_seance2'), -1) : 'de la veille de l\'oral'}. Le fichier s'ouvre dans Google Agenda, Outlook ou l'agenda du téléphone.</p>
+      <div class="actions"><button type="button" class="btn" data-action="rappel-ics"${dateChamp('id_seance2') ? '' : ' disabled'}>Ajouter le rappel à mon agenda (.ics)</button></div>${dateChamp('id_seance2') ? '' : `<p class="note">Saisissez d'abord la date de la dernière session, à la page « Départ ».</p>`}`)
 }
 ];
-const groupes = () => ['Première session', 'Entre les deux sessions', 'Dépôt et oral'];
+const groupes = () => ['Première session', 'Entre les deux sessions', 'Envoi et oral'];
 
 /* ───────── Travail des quatre projets : calculs faits par la page, vérifiés à la main par le groupe ───────── */
 const PREFIXES = { strategie: 'ps_', chantier: 'pc_', contrats: 'pk_', rh: 'pr_' };
@@ -1829,16 +1841,16 @@ function diagnostic(C) {
     [0, d.cadrageIA, `Réécrire le cadrage initial à la main et le dater.`],
     [0, d.sansVerif, `Ouvrir chaque référence sur sa source officielle et noter le verdict.`],
     [0, lignes < 3, `Remplir le journal : au moins trois usages significatifs, dont un rejeté ou modifié.`],
-    [0, true, `Enregistrer le fichier de projet et le ranger dans le dossier Teams du groupe.`],
+    [0, true, `Enregistrer le fichier de projet et l'envoyer à votre propre adresse, en sécurité.`],
     [1, verdicts < 3, `Terminer la fiche de contrôle : un verdict pour chaque thème traité.`],
     [1, j.charge >= 60, `Réduire le périmètre au livrable minimal et le terminer.`],
     [1, true, `Refaire à la main un calcul de chaque tableau ou indicateur du projet.`],
     [1, true, `Préparer le support : dix diapositives au plus, avec sources et dates.`],
     [2, true, `Relire le journal et la fiche de contrôle avec une personne extérieure au groupe.`],
     [2, true, `Préparer l'oral : qui présente quoi, et la réponse à la question du jury.`],
-    [2, true, `Déposer les fichiers sur Teams au plus tard ${DEPOT()}.`]
+    [2, true, `Envoyer les fichiers au formateur par e-mail, au plus tard ${DEPOT()}.`]
   ];
-  const temps = [`Cette semaine`, `Avant le dépôt`, `Avant l'oral`].map((t, i) => ({ t, a: pool.filter(x => x[0] === i && x[1]).slice(0, 3).map(x => x[2].replace(/\.$/, '')) }));
+  const temps = [`Cette semaine`, `Avant l'envoi`, `Avant l'oral`].map((t, i) => ({ t, a: pool.filter(x => x[0] === i && x[1]).slice(0, 3).map(x => x[2].replace(/\.$/, '')) }));
   return { titre, phrases: ph, alertes: alertes(C).filter(a => a[0] !== 'info').map(a => a[1]), temps };
 }
 
@@ -1897,7 +1909,7 @@ function dossierHtml(C) {
   return `<div class="couv"><p>Module « ${CONFIG.module} » – ${CONFIG.formation}</p>
       <h1>Journal de bord IA et dossier – groupe ${rempli('id_groupe') ? esc(String(v('id_groupe')).trim()) : '…'}</h1>
       <p><b>${t('id_nom')}</b> – classe ${esc(nomClasse())} – chantier fictif ${CHANTIER.nom}</p><p>Projet : ${P ? P.t : '<span class="vide">à choisir</span>'}</p>
-      <p>Dossier exporté le ${dateFr(new Date())}. Dépôt sur Teams avec le support, au plus tard ${DEPOTL()}.</p></div>
+      <p>Dossier exporté le ${dateFr(new Date())}. Envoi par e-mail au formateur, avec le support, au plus tard ${DEPOTL()}.</p></div>
     <h2>1. Le groupe</h2><p><b>Page tenue par.</b> ${t('id_nom')}</p><p><b>Membres.</b> ${t('id_membres')}</p><table><tr><th>Rôle</th><th>Responsable</th></tr>${roles}</table>
     <h2>2. Le projet</h2>${P ? `<p><b>${P.t}.</b> ${P.but}</p><p><b>Livrable minimal.</b> ${P.livrable}</p><p><b>Angle principal.</b> ${P.missions.join(', ')}.</p>` : ''}${rempli('ch_manque') ? qr('Ce qui manque à la fiche du chantier : nos hypothèses', 'ch_manque') : ''}${qr('Plan retenu par le groupe', 'p_plan')}${rempli('p_consigne') ? qr('Consigne de démarrage, améliorée dans l\'entraîneur de prompt', 'p_consigne') : ''}
     <h2>3. Le travail du projet</h2>${travailDossier()}
@@ -1925,6 +1937,7 @@ const slug = x => String(x).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^
 const nomGroupe = () => (rempli('id_groupe') ? 'G' + String(v('id_groupe')).trim().replace(/^g/i, '') : 'groupe');
 const cheminNom = () => nomGroupe() + (rempli('id_nom') ? '_' + slug(v('id_nom')) : '');
 const nomJson = () => 'TNBIM_' + cheminNom() + '_' + (S.exportLe || new Date().toISOString()).slice(0, 10) + '.json';
+const nomPdf = () => 'TNBIM_' + cheminNom() + '_journal-dossier.pdf';
 const CLE_NOTES = 'correcteur-tnbim-notes';
 let ETUDIANTS = [], TRI = { k: 'groupe', sens: 1 }, OUVERT = null, IGNORES = 0, REFUSES = [];
 
