@@ -92,3 +92,8 @@ Ne pas changer les identifiants de champs et de choix pendant qu'un groupe trava
 - Constat : le cadrage initial était à l'étape 5, mais la conversation avec Claude démarre à l'étape 3. L'étudiant devait revenir en arrière pour copier la réponse.
 - Correction : l'étape « Écrivez le cadrage initial, sans IA » passe dans « 3. Votre projet », avant l'entraîneur. La consigne de comparaison suit la consigne de démarrage. L'étape 5 garde un simple renvoi.
 - Identifiants de champs inchangés (cad_*, decision cadrage). L'alerte « cadrage non écrit » renvoie maintenant vers l'étape 3.
+
+## Livraison 7 – 21 octobre 2026 (soir) : fenêtre « Bon retour »
+- Après 30 minutes d'absence (rechargement ou retour sur l'onglet), une fenêtre rappelle la dernière visite, l'endroit où l'on s'était arrêté, l'avancement, la prochaine étape du groupe et l'état du fichier de projet. Boutons « Reprendre où je m'étais arrêté », « Aller à la prochaine étape », « Fermer ». Rien ne s'affiche à la première visite ni sans travail commencé.
+- Code à la fin de `src/07-interface.js` (fonction `bonRetour`). Seule écriture : l'heure de la dernière visite sous la clé `tnbim-esct-v1-derniere-visite`. Aucun identifiant de champ, aucun choix, aucun fichier de projet modifié ; le correcteur n'est pas touché.
+- Testé dans un navigateur : pas de fenêtre sans travail, fenêtre après une absence simulée de deux heures, pas de nouvelle fenêtre au rechargement immédiat, état de l'étudiant identique avant et après. Publié (commit af0a8e5), avant la session du gpC3 du 4 novembre.
